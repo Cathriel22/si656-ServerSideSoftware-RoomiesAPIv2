@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Publication\Services\PostService.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Roomies.API.Domain.Models;
+using Roomies.API.Domain.Repositories;
+using Roomies.API.Domain.Services;
+using Roomies.API.Domain.Services.Communications;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Roomies.API.Services
+{
+    public class PostService : IPostService
+    {
+        private readonly IPostRepository _postRepository;
+        private readonly ILandlordRepository _landlordRepository;
+        private readonly IFavouritePostRepository _favouritePostRepository;
+        private readonly IReviewRepository _reviewRepository;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public PostService(IPostRepository postRepository, IUnitOfWork unitOfWork, IFavouritePostRepository favouritePostRepository, ILandlordRepository landlordRepository = null, IReviewRepository reviewRepository = null)
+        {
+            _postRepository = postRepository;
+            _favouritePostRepository = favouritePostRepository;
+            _unitOfWork = unitOfWork;
+            _landlordRepository = landlordRepository;
+            _reviewRepository = reviewRepository;
+        }
+
+
+        public async Task&lt;PostResponse&gt; DeleteAsync(int id)
+        {
+            var existingPost = await _postRepository.FindById(id);
+
+            if (existingPost == null)
+                return new PostResponse(&quot;Post inexistente&quot;);
+
+            try
+            {
+                if (existingPost.Reviews!=null) { 
+                 existingPost.Reviews.ForEach(delegate (Review review)
+                  {
+                      _reviewRepository.Remove(review);
+                 });
+                }
+
+                _postRepository.Remove(existingPost);
+                await _unitOfWork.CompleteAsync();
+
+                return new PostResponse(existingPost);
+            }
+            catch (Exception ex)
+            {
+                return new PostResponse($&quot;Un error ocurri&#243; al buscar el post: {ex.Message}&quot;);
+            }
+        }
+
+        public async Task&lt;PostResponse&gt; GetByIdAsync(int postId)
+        {
+            var existingPost= await _postRepository.FindById(postId);
+
+            if (existingPost == null)
+                return new PostResponse(&quot;Post inexistente&quot;);
+
+            return new PostResponse(existingPost);
+        }
+
+        public async Task&lt;IEnumerable&lt;Post&gt;&gt; ListAsync()
+        {
+            return await _postRepository.ListAsync();
+        }
+
+        public async Task&lt;IEnumerable&lt;Post&gt;&gt; ListByLandlordIdAsync(int landlordId)
+        {
+            return await _postRepository.ListByLandlordIdAsync(landlordId);
+        }
+
+        public async Task&lt;IEnumerable&lt;Post&gt;&gt; ListByLeaseholderIdAsync(int leaseholderId)
+        {
+            var favouritePosts = await _favouritePostRepository.ListByLeaseholderIdAsync(leaseholderId);
+            var post = favouritePosts.Select(pt =&gt; pt.Post).ToList();
+            return post;
+        }
+
+
+        public async Task&lt;PostResponse&gt; SaveAsync(Post post,int landlordId)
+        {
+            var existingLandlord = await _landlordRepository.FindById(landlordId);
+
+            if (existingLandlord== null)
+                return new PostResponse(&quot;Arrendador inexistente&quot;);
+
+
+            try
+            {
+                post.LandlordId = landlordId;
+
+                await _postRepository.AddAsync(post);
+                await _unitOfWork.CompleteAsync();
+
+                return new PostResponse(post);
+            }
+            catch (Exception ex)
+            {
+                return new PostResponse($&quot;Un error ocurri&#243; al guardar el post: {ex.Message}&quot;);
+            }
+        }
+
+        public async Task&lt;PostResponse&gt; UpdateAsync(int id, Post post)
+        {
+            var existingPost = await _postRepository.FindById(id);
+
+            if (existingPost == null)
+                return new PostResponse(&quot;Post inexistente&quot;);
+
+            existingPost.Title = post.Title;
+            existingPost.Address = post.Address;
+            existingPost.BathroomQuantity = post.BathroomQuantity;
+            existingPost.Price = post.Price;
+            existingPost.Province = post.Province;
+            existingPost.District = post.District;
+            existingPost.Department = post.Department;
+            existingPost.RoomQuantity = post.RoomQuantity;
+            existingPost.Description = post.Description;
+            existingPost.Photo = post.Photo;
+
+            try
+            {
+                _postRepository.Update(existingPost);
+                await _unitOfWork.CompleteAsync();
+
+                return new PostResponse(existingPost);
+            }
+            catch (Exception ex)
+            {
+                return new PostResponse($&quot;Un error ocurri&#243; al actualizar el post: {ex.Message}&quot;);
+            }
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[20,9,20,223,1],[21,9,21,10,1],[22,13,22,46,1],[23,13,23,64,1],[24,13,24,38,1],[25,13,25,54,1],[26,13,26,50,1],[27,9,27,10,1],[31,9,31,10,0],[32,13,32,67,0],[34,13,34,38,0],[35,17,35,61,0],[38,13,38,14,0],[39,17,39,48,0],[39,49,39,50,0],[40,18,41,19,0],[41,19,41,20,0],[41,20,42,23,0],[42,23,42,56,0],[42,56,43,18,0],[43,18,43,19,0],[43,19,43,21,0],[44,17,44,18,0],[46,17,46,54,0],[47,17,47,51,0],[49,17,49,55,0],[51,13,51,33,0],[52,13,52,14,0],[53,17,53,94,0],[55,9,55,10,0],[58,9,58,10,1],[59,13,59,70,1],[61,13,61,38,1],[62,17,62,61,1],[64,13,64,51,0],[65,9,65,10,1],[68,9,68,10,1],[69,13,69,54,1],[70,9,70,10,1],[73,9,73,10,1],[74,13,74,76,1],[75,9,75,10,1],[78,9,78,10,0],[79,13,79,105,0],[80,13,80,52,0],[80,52,80,59,0],[80,59,80,70,0],[81,13,81,25,0],[82,9,82,10,0],[86,9,86,10,1],[87,13,87,83,1],[89,13,89,41,1],[90,17,90,67,0],[94,13,94,14,1],[95,17,95,46,1],[97,17,97,54,1],[98,17,98,51,1],[100,17,100,47,1],[102,13,102,33,0],[103,13,103,14,0],[104,17,104,95,0],[106,9,106,10,1],[109,9,109,10,1],[110,13,110,67,1],[112,13,112,38,1],[113,17,113,61,0],[115,13,115,45,1],[116,13,116,49,1],[117,13,117,67,1],[118,13,118,45,1],[119,13,119,51,1],[120,13,120,51,1],[121,13,121,55,1],[122,13,122,59,1],[123,13,123,57,1],[124,13,124,45,1],[127,13,127,14,1],[128,17,128,54,1],[129,17,129,51,1],[131,17,131,55,1],[133,13,133,33,0],[134,13,134,14,0],[135,17,135,98,0],[137,9,137,10,1]]);
+    </script>
+  </body>
+</html>

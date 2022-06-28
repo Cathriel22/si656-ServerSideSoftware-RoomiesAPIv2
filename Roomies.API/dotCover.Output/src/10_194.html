@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API.Test\RuleServiceTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using NUnit.Framework;
+using Moq;
+using FluentAssertions;
+using Roomies.API.Domain.Repositories;
+using Roomies.API.Services;
+using Roomies.API.Domain.Services.Communications;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using Roomies.API.Domain.Models;
+using Roomies.API.Publication.Domain.Models;
+using Roomies.API.Publication.Services;
+using Roomies.API.Publication.Domain.Persistence.Repositories;
+using Roomies.API.Publication.Domain.Services.Communication;
+
+namespace Roomies.API.Test
+{
+    public class RuleServiceTest
+    {
+        [SetUp]
+        public void Setup()
+        {
+        }
+
+        [Test]
+        public async Task GetAllAsyncWhenNoRuleReturnsEmptyCollection()
+        {
+            // Arrange
+
+            var mockRuleRepository = GetDefaultIRuleRepositoryInstance();
+            var mockPostRepository = GetDefaultIPostRepositoryInstance();
+            var mockUnitOfWork = GetDefaultIUnitOfWorkInstance();
+
+            mockRuleRepository.Setup(r =&gt; r.ListAsync()).ReturnsAsync(new List&lt;Rule&gt;());
+
+            var service = new RuleService(mockRuleRepository.Object, mockUnitOfWork.Object,mockPostRepository.Object);
+
+            // Act
+
+            List&lt;Rule&gt; result = (List&lt;Rule&gt;)await service.ListAsync();
+            var ruleCount = result.Count;
+
+            // Assert
+
+            ruleCount.Should().Equals(0);
+        }
+
+        [Test]
+        public async Task GetAllByPostIdAsyncWhenNoRuleReturnsEmptyCollection()
+        {
+            // Arrange
+
+            var mockRuleRepository = GetDefaultIRuleRepositoryInstance();
+            var mockPostRepository = GetDefaultIPostRepositoryInstance();
+            var mockUnitOfWork = GetDefaultIUnitOfWorkInstance();
+            var postId = 1;
+
+            mockRuleRepository.Setup(r =&gt; r.ListByPostId(postId)).ReturnsAsync(new List&lt;Rule&gt;());
+
+            var service = new RuleService(mockRuleRepository.Object, mockUnitOfWork.Object, mockPostRepository.Object);
+
+            // Act
+
+            List&lt;Rule&gt; result = (List&lt;Rule&gt;)await service.ListByPostId(postId);
+            var ruleCount = result.Count;
+
+            // Assert
+
+            ruleCount.Should().Equals(0);
+        }
+
+        [Test]
+        public async Task GetByIdAsyncWhenInvalidIdReturnsRuleNotFoundResponse()
+        {
+            // Arrange
+            var mockRuleRepository = GetDefaultIRuleRepositoryInstance();
+            var mockUnitOfWork = GetDefaultIUnitOfWorkInstance();
+            var mockPostRepository = GetDefaultIPostRepositoryInstance();
+
+            var ruleId = 1;
+            Rule rule = new Rule();
+            mockRuleRepository.Setup(r =&gt; r.FindById(ruleId)).Returns(Task.FromResult&lt;Rule&gt;(null));
+
+            var service = new RuleService(mockRuleRepository.Object, mockUnitOfWork.Object, mockPostRepository.Object);
+
+            // Act
+            RuleResponse result = await service.GetByIdAsync(ruleId);
+            var message = result.Message;
+
+            // Assert
+            message.Should().Be(&quot;Rule inexistente&quot;);
+        }
+
+        [Test]
+        public async Task SaveRuleReturnsSave()
+        {
+            // Arrange
+
+
+            var mockPostRepository = GetDefaultIPostRepositoryInstance();
+
+            var mockUnitOfWork = GetDefaultIUnitOfWorkInstance();
+            var mockRuleRepository = GetDefaultIRuleRepositoryInstance();
+
+            Post post = new Post
+            {
+                Id = 1
+
+            };
+
+            Rule rule = new Rule
+            {
+                Id = 1
+
+            };
+
+
+            mockPostRepository.Setup(u =&gt; u.AddAsync(post)).Returns(Task.FromResult&lt;Post&gt;(post));
+            mockPostRepository.Setup(u =&gt; u.FindById(1)).Returns(Task.FromResult&lt;Post&gt;(post));
+
+            mockRuleRepository.Setup(u =&gt; u.AddAsync(rule)).Returns(Task.FromResult&lt;Rule&gt;(rule));
+            mockRuleRepository.Setup(u =&gt; u.FindById(1)).Returns(Task.FromResult&lt;Rule&gt;(rule));
+
+
+
+            var service = new RuleService(mockRuleRepository.Object, mockUnitOfWork.Object, mockPostRepository.Object);
+
+
+            // Act
+
+
+            RuleResponse result = await service.SaveAsync(1, rule);
+
+
+            // Assert
+
+            result.Resource.Should().Be(rule);
+        }
+
+        [Test]
+        public async Task UpdateRuleReturnsUpdate()
+        {
+            // Arrange
+
+
+            var mockPostRepository = GetDefaultIPostRepositoryInstance();
+
+            var mockUnitOfWork = GetDefaultIUnitOfWorkInstance();
+            var mockRuleRepository = GetDefaultIRuleRepositoryInstance();
+
+            Post post = new Post
+            {
+                Id = 1
+
+            };
+
+            Rule rule = new Rule
+            {
+                Id = 1,
+                Description = &quot;Hello word :)&quot;,             
+
+            };
+
+
+            mockPostRepository.Setup(u =&gt; u.AddAsync(post)).Returns(Task.FromResult&lt;Post&gt;(post));
+            mockPostRepository.Setup(u =&gt; u.FindById(1)).Returns(Task.FromResult&lt;Post&gt;(post));
+
+            mockRuleRepository.Setup(u =&gt; u.AddAsync(rule)).Returns(Task.FromResult&lt;Rule&gt;(rule));
+            mockRuleRepository.Setup(u =&gt; u.FindById(1)).Returns(Task.FromResult&lt;Rule&gt;(rule));
+
+
+
+            var service = new RuleService(mockRuleRepository.Object, mockUnitOfWork.Object, mockPostRepository.Object);
+
+
+            // Act
+
+
+            RuleResponse result = await service.UpdateAsync(1, rule);
+
+
+            // Assert
+
+            result.Resource.Should().Be(rule);
+        }
+
+        private static Mock&lt;IRuleRepository&gt; GetDefaultIRuleRepositoryInstance()
+        {
+            return new Mock&lt;IRuleRepository&gt;();
+        }
+
+        private static Mock&lt;IPostRepository&gt; GetDefaultIPostRepositoryInstance()
+        {
+            return new Mock&lt;IPostRepository&gt;();
+        }
+
+        private static Mock&lt;IUnitOfWork&gt; GetDefaultIUnitOfWorkInstance()
+        {
+            return new Mock&lt;IUnitOfWork&gt;();
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[21,9,21,10,1],[22,9,22,10,1],[26,9,26,10,1],[29,13,29,74,1],[30,13,30,74,1],[31,13,31,66,1],[33,13,33,89,1],[35,13,35,119,1],[39,13,39,71,1],[40,13,40,42,1],[44,13,44,42,1],[45,9,45,10,1],[49,9,49,10,1],[52,13,52,74,1],[53,13,53,74,1],[54,13,54,66,1],[55,13,55,28,1],[57,13,57,98,1],[59,13,59,120,1],[63,13,63,80,1],[64,13,64,42,1],[68,13,68,42,1],[69,9,69,10,1],[73,9,73,10,1],[75,13,75,74,1],[76,13,76,66,1],[77,13,77,74,1],[79,13,79,28,1],[80,13,80,36,1],[81,13,81,100,1],[83,13,83,120,1],[86,13,86,70,1],[87,13,87,42,1],[90,13,90,53,1],[91,9,91,10,1],[95,9,95,10,1],[99,13,99,74,1],[101,13,101,66,1],[102,13,102,74,1],[104,13,108,15,1],[110,13,114,15,1],[117,13,117,98,1],[118,13,118,95,1],[120,13,120,98,1],[121,13,121,95,1],[125,13,125,120,1],[131,13,131,68,1],[136,13,136,47,1],[137,9,137,10,1],[141,9,141,10,1],[145,13,145,74,1],[147,13,147,66,1],[148,13,148,74,1],[150,13,154,15,1],[156,13,161,15,1],[164,13,164,98,1],[165,13,165,95,1],[167,13,167,98,1],[168,13,168,95,1],[172,13,172,120,1],[178,13,178,70,1],[183,13,183,47,1],[184,9,184,10,1],[187,9,187,10,1],[188,13,188,48,1],[189,9,189,10,1],[192,9,192,10,1],[193,13,193,48,1],[194,9,194,10,1],[197,9,197,10,1],[198,13,198,44,1],[199,9,199,10,1]]);
+    </script>
+  </body>
+</html>

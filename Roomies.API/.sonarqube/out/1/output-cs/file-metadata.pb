@@ -1,0 +1,15 @@
+g
+^C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API.Test\FavouritePostServiceTest.csutf-8b
+YC:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API.Test\LandlordServiceTest.csutf-8e
+\C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API.Test\LeaseholderServiceTest.csutf-8g
+^C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API.Test\PaymentMethodServiceTest.csutf-8^
+UC:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API.Test\PlanServiceTest.csutf-8^
+UC:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API.Test\PostServiceTest.csutf-8n
+eC:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API.Test\ProfilePaymentMethodServiceTest.csutf-8a
+XC:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API.Test\ProfileServiceTest.csutf-8`
+WC:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API.Test\ReviewServiceTest.csutf-8^
+UC:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API.Test\RuleServiceTest.csutf-8^
+UC:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API.Test\UserServiceTest.csutf-8}
+rC:\Users\usuar\.nuget\packages\microsoft.net.test.sdk\16.5.0\build\netcoreapp2.1\Microsoft.NET.Test.Sdk.Program.csutf-8Ž
+‚C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API.Test\obj\Debug\net5.0\.NETCoreApp,Version=v5.0.AssemblyAttributes.csutf-8
+tC:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API.Test\obj\Debug\net5.0\Roomies.API.Test.AssemblyInfo.csutf-8

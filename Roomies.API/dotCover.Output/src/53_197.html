@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Publication\Persistence\Repositories\PostRepository.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.EntityFrameworkCore;
+using Roomies.API.Domain.Models;
+using Roomies.API.Domain.Persistence.Contexts;
+using Roomies.API.Domain.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Roomies.API.Persistence.Repositories
+{
+    public class PostRepository : BaseRepository, IPostRepository
+    {
+        public PostRepository(AppDbContext context) : base(context)
+        {
+        }
+
+        public async Task AddAsync(Post post)
+        {
+            await _context.Posts.AddAsync(post);
+        }
+
+        public async Task&lt;Post&gt; FindById(int postId)
+        {           
+            return await _context.Posts.Include(p =&gt; p.Landlord).FirstAsync(p =&gt; p.Id == postId);
+
+        }
+
+        public async Task&lt;IEnumerable&lt;Post&gt;&gt; ListAsync()
+        {           
+            return await _context.Posts.Include(p =&gt; p.Landlord).ToListAsync();
+        }
+
+        public async Task&lt;IEnumerable&lt;Post&gt;&gt; ListByLandlordIdAsync(int landlordId)
+        {
+            return await _context.Posts
+                .Where(p =&gt; p.LandlordId == landlordId)
+                .Include(p =&gt; p.Landlord)
+                .ToListAsync();
+        }
+
+      
+        public void Remove(Post post)
+        {
+            _context.Posts.Remove(post);
+        }
+
+        public void Update(Post post)
+        {
+            _context.Posts.Update(post);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[14,55,14,68,0],[15,9,15,10,0],[16,9,16,10,0],[19,9,19,10,0],[20,13,20,49,0],[21,9,21,10,0],[24,9,24,10,0],[25,13,25,98,0],[27,9,27,10,0],[30,9,30,10,0],[31,13,31,80,0],[32,9,32,10,0],[35,9,35,10,0],[36,13,39,32,0],[40,9,40,10,0],[44,9,44,10,0],[45,13,45,41,0],[46,9,46,10,0],[49,9,49,10,0],[50,13,50,41,0],[51,9,51,10,0]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Program.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Roomies.API.Domain.Persistence.Contexts;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Roomies.API
+{
+    public static class Program
+    {
+        public static void Main(string[] args)
+        {
+            var host = CreateHostBuilder(args).Build();
+            using (var scope = host.Services.CreateScope())
+                using (var context = scope.ServiceProvider.GetService&lt;AppDbContext&gt;())
+            {
+                context.Database.EnsureCreated();
+            }
+            host.Run();
+        }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =&gt;
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =&gt;
+                {
+                    webBuilder.UseStartup&lt;Startup&gt;();
+                });
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,9,17,10,0],[18,13,18,56,0],[19,20,19,59,0],[20,24,20,86,0],[21,13,21,14,0],[22,17,22,50,0],[23,13,23,14,0],[24,13,24,24,0],[25,9,25,10,0],[28,13,30,17,0],[30,17,30,18,0],[30,18,31,21,0],[31,21,31,54,0],[31,54,32,17,0],[32,17,32,18,0],[32,18,32,19,0]]);
+    </script>
+  </body>
+</html>

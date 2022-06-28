@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Publication\Persistence\Repositories\FavouritePostRepository.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.EntityFrameworkCore;
+using Roomies.API.Domain.Models;
+using Roomies.API.Domain.Persistence.Contexts;
+using Roomies.API.Domain.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Roomies.API.Persistence.Repositories
+{
+    public class FavouritePostRepository : BaseRepository, IFavouritePostRepository
+    {
+        public FavouritePostRepository(AppDbContext context) : base(context)
+        {
+        }
+
+        public async Task AddAsync(FavouritePost favouritePost)
+        {
+            await _context.FavouritePosts.AddAsync(favouritePost);
+        }
+
+        public async Task AssignFavouritePostAsync(int postId, int leaseholderId)
+        {
+            FavouritePost favouritePost = await FindByPostIdAndLeaseholderId(postId, leaseholderId);
+            if (favouritePost == null)
+            {
+                favouritePost = new FavouritePost { PostId = postId, LeaseholderId = leaseholderId };
+                await AddAsync(favouritePost);
+            }
+        }
+
+        public async Task&lt;FavouritePost&gt; FindByPostIdAndLeaseholderId(int postId, int leaseholderId)
+        {
+            return await _context.FavouritePosts.FindAsync(postId, leaseholderId);
+        }
+
+        public async Task&lt;IEnumerable&lt;FavouritePost&gt;&gt; ListAsync()
+        {
+            return await _context.FavouritePosts
+                .Include(pt =&gt; pt.Post)
+                .Include(pt =&gt; pt.Leaseholder)
+                .ToListAsync();
+        }
+
+        public async Task&lt;IEnumerable&lt;FavouritePost&gt;&gt; ListByLeaseholderIdAsync(int leaseholderId)
+        {
+            return await _context.FavouritePosts
+                .Where(pt =&gt; pt.LeaseholderId == leaseholderId )
+                .Include(pt =&gt; pt.Post).ThenInclude(l=&gt;l.Landlord)
+                //.Include(pt =&gt; pt.Leaseholder)
+                .ToListAsync();
+        }
+
+        public async Task&lt;IEnumerable&lt;FavouritePost&gt;&gt; ListByPostIdAsync(int postId)
+        {
+            return await _context.FavouritePosts
+               .Where(pt =&gt; pt.PostId == postId)
+               .Include(pt =&gt; pt.Post)
+               .Include(pt =&gt; pt.Leaseholder)
+               .ToListAsync();
+
+        }
+
+        public void Remove(FavouritePost favouritePost)
+        {
+            _context.FavouritePosts.Remove(favouritePost);
+        }
+
+        public async Task UnassignFavouritePostAsync(int postId, int leaseholderId)
+        {
+            FavouritePost favouritePost = await FindByPostIdAndLeaseholderId(postId, leaseholderId);
+            if (favouritePost != null)
+                Remove(favouritePost);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[14,64,14,77,0],[15,9,15,10,0],[16,9,16,10,0],[19,9,19,10,0],[20,13,20,67,0],[21,9,21,10,0],[24,9,24,10,0],[25,13,25,101,0],[26,13,26,39,0],[27,13,27,14,0],[28,17,28,102,0],[29,17,29,47,0],[30,13,30,14,0],[31,9,31,10,0],[34,9,34,10,0],[35,13,35,83,0],[36,9,36,10,0],[39,9,39,10,0],[40,13,43,32,0],[44,9,44,10,0],[47,9,47,10,0],[48,13,52,32,0],[53,9,53,10,0],[56,9,56,10,0],[57,13,61,31,0],[63,9,63,10,0],[66,9,66,10,0],[67,13,67,59,0],[68,9,68,10,0],[71,9,71,10,0],[72,13,72,101,0],[73,13,73,39,0],[74,17,74,39,0],[75,9,75,10,0]]);
+    </script>
+  </body>
+</html>

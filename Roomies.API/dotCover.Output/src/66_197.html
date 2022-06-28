@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Publication\Controllers\PostsController.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Roomies.API.Domain.Models;
+using Roomies.API.Domain.Services;
+using Roomies.API.Extensions;
+using Roomies.API.Publication.Domain.Models;
+using Roomies.API.Publication.Domain.Services;
+using Roomies.API.Publication.Resources;
+using Roomies.API.Resources;
+using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Roomies.API.Controllers
+{
+    [Route(&quot;/api/[controller]&quot;)]
+    [Produces(&quot;application/json&quot;)]
+    [ApiController]
+
+    public class PostsController:ControllerBase
+    {
+        private readonly IPostService _postService;
+        private readonly IRuleService _ruleService;
+
+        private readonly IMapper _mapper;
+
+        public PostsController(IPostService postService, IMapper mapper, IRuleService ruleService)
+        {
+            _ruleService = ruleService;
+            _postService = postService;
+            _mapper = mapper;
+        }
+
+        [SwaggerOperation(
+           Summary = &quot;List all Posts&quot;,
+           Description = &quot;List of Posts&quot;,
+           OperationId = &quot;ListAllPosts&quot;
+           )]
+        [SwaggerResponse(200, &quot;List of Posts&quot;, typeof(IEnumerable&lt;PostResource&gt;))]
+        [HttpGet]
+        public async Task&lt;IEnumerable&lt;PostResource&gt;&gt; GetAllAsync()
+        {
+            var posts = await _postService.ListAsync();
+            var resources = _mapper.Map&lt;IEnumerable&lt;Post&gt;, IEnumerable&lt;PostResource&gt;&gt;(posts);
+
+            return resources;
+        }
+
+        [HttpGet(&quot;{id}&quot;)]
+        [ProducesResponseType(typeof(PostResource), 200)]
+        [ProducesResponseType(typeof(BadRequestResult), 404)]
+        public async Task&lt;IActionResult&gt; GetAsync(int id)
+        {
+            var result = await _postService.GetByIdAsync(id);
+
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            var postResource = _mapper.Map&lt;Post, PostResource&gt;(result.Resource);
+            return Ok(postResource);
+        }
+
+        [HttpGet(&quot;{postId}/rules&quot;)]
+        public async Task&lt;IEnumerable&lt;RuleResource&gt;&gt; GetAllRulesAsync(int postId)
+        {
+            var rules= await _ruleService.ListByPostId(postId);
+            var resources = _mapper.Map&lt;IEnumerable&lt;Rule&gt;, IEnumerable&lt;RuleResource&gt;&gt;(rules);
+
+            return resources;
+        }
+
+        [HttpPost(&quot;posts/{postId}/rules&quot;)]
+        public async Task&lt;IActionResult&gt; PostAsync([FromBody] SaveRuleResource resource, int postId)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState.GetErrorMessages());
+
+            var rules = _mapper.Map&lt;SaveRuleResource, Rule&gt;(resource);
+            var result = await _ruleService.SaveAsync(postId, rules);
+
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            var ruleResource = _mapper.Map&lt;Rule, RuleResource&gt;(result.Resource);
+
+            return Ok(ruleResource);
+
+        }
+
+        [HttpPost(&quot;landlords/{landlordId}/posts&quot;)]
+
+        public async Task&lt;IActionResult&gt; PostAsync([FromBody] SavePostResource resource, int landlordId)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState.GetErrorMessages());
+
+            var post = _mapper.Map&lt;SavePostResource, Post&gt;(resource);
+            var result = await _postService.SaveAsync(post, landlordId);
+
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            var postResource = _mapper.Map&lt;Post, PostResource&gt;(result.Resource);
+
+            return Ok(postResource);
+        }
+        
+        [HttpPut(&quot;{id}&quot;)]
+        public async Task&lt;IActionResult&gt; PutAsync(int id, [FromBody] SavePostResource resource)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState.GetErrorMessages());
+
+            var post = _mapper.Map&lt;SavePostResource, Post&gt;(resource);
+            var result = await _postService.UpdateAsync(id, post);
+
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            var postResource = _mapper.Map&lt;Post, PostResource&gt;(result.Resource);
+
+            return Ok(postResource);
+
+        }
+
+        [HttpDelete(&quot;{id}&quot;)]
+        public async Task&lt;IActionResult&gt; DeleteAsync(int id)
+        {
+            var result = await _postService.DeleteAsync(id);
+
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            var postResource = _mapper.Map&lt;Post, PostResource&gt;(result.Resource);
+
+            return Ok(postResource);
+
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[29,9,29,99,0],[30,9,30,10,0],[31,13,31,40,0],[32,13,32,40,0],[33,13,33,30,0],[34,9,34,10,0],[44,9,44,10,0],[45,13,45,56,0],[46,13,46,94,0],[48,13,48,30,0],[49,9,49,10,0],[55,9,55,10,0],[56,13,56,62,0],[58,13,58,33,0],[59,17,59,51,0],[61,13,61,81,0],[62,13,62,37,0],[63,9,63,10,0],[67,9,67,10,0],[68,13,68,64,0],[69,13,69,94,0],[71,13,71,30,0],[72,9,72,10,0],[76,9,76,10,0],[77,13,77,37,0],[78,17,78,66,0],[80,13,80,71,0],[81,13,81,70,0],[83,13,83,33,0],[84,17,84,51,0],[86,13,86,81,0],[88,13,88,37,0],[90,9,90,10,0],[95,9,95,10,0],[96,13,96,37,0],[97,17,97,66,0],[99,13,99,70,0],[100,13,100,73,0],[102,13,102,33,0],[103,17,103,51,0],[105,13,105,81,0],[107,13,107,37,0],[108,9,108,10,0],[112,9,112,10,0],[113,13,113,37,0],[114,17,114,66,0],[116,13,116,70,0],[117,13,117,67,0],[119,13,119,33,0],[120,17,120,51,0],[122,13,122,81,0],[124,13,124,37,0],[126,9,126,10,0],[130,9,130,10,0],[131,13,131,61,0],[133,13,133,33,0],[134,17,134,51,0],[136,13,136,81,0],[138,13,138,37,0],[140,9,140,10,0]]);
+    </script>
+  </body>
+</html>

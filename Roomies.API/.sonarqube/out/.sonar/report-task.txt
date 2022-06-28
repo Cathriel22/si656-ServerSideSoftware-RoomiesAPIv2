@@ -1,0 +1,6 @@
+projectKey=Roomies
+serverUrl=http://localhost:9000
+serverVersion=9.4.0.54424
+dashboardUrl=http://localhost:9000/dashboard?id=Roomies
+ceTaskId=AYGSy_JhRK383O_tNWeK
+ceTaskUrl=http://localhost:9000/api/ce/task?id=AYGSy_JhRK383O_tNWeK

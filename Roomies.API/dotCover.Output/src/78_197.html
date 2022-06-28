@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Plan\Domain\Models\User.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
+
+namespace Roomies.API.Domain.Models
+{
+    public class User
+    {
+        public int Id { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Username { get; set; }
+        [JsonIgnore]
+        public string PasswordHash { get; set; }
+        [JsonIgnore]
+        public string Token { get; set; }
+
+        public int ProfileId { get; set; }
+        public Profile Profile { get; set; }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[11,25,11,29,0],[11,30,11,34,1],[12,35,12,39,0],[12,40,12,44,0],[13,34,13,38,0],[13,39,13,43,0],[14,34,14,38,0],[14,39,14,43,0],[16,38,16,42,0],[16,43,16,47,0],[18,31,18,35,0],[18,36,18,40,0],[20,32,20,36,0],[20,37,20,41,0],[21,34,21,38,0],[21,39,21,43,0]]);
+    </script>
+  </body>
+</html>

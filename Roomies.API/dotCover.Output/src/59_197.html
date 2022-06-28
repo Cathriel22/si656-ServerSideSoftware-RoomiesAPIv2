@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Plan\Controllers\UsersController.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Roomies.API.Domain.Models;
+using Roomies.API.Domain.Services;
+using Roomies.API.Domain.Services.Communications;
+using Roomies.API.Extensions;
+using Roomies.API.Resources;
+using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Roomies.API.Controllers
+{
+    [Route(&quot;/api/[controller]&quot;)]
+    [Produces(&quot;application/json&quot;)]
+    [ApiController]
+    public class UsersController:ControllerBase
+    {
+        private readonly IUserService _userService;
+        private readonly IProfileService _profileService;
+        private readonly ILeaseholderService _leaseholderService;
+        private readonly ILandlordService _landlordService;
+        private readonly IMapper _mapper;
+
+        public UsersController(IUserService userService, IMapper mapper, IProfileService profileService, ILeaseholderService leaseholderService, ILandlordService landlordService)
+        {
+            _userService = userService;
+            _mapper = mapper;
+            _profileService = profileService;
+            _leaseholderService = leaseholderService;
+            _landlordService = landlordService;
+        }
+
+        [SwaggerOperation(
+            Summary =&quot;List of all Users&quot;,
+            Description=&quot;List of Users&quot;,
+            OperationId =&quot;ListAllUsers&quot;
+            )]
+        [SwaggerResponse(200, &quot;List of Users&quot;, typeof(IEnumerable&lt;UserResource&gt;))]
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable&lt;AuthenticationResponse&gt;), 200)]
+        [ProducesResponseType(typeof(BadRequestResult), 404)]
+        public async Task&lt;IEnumerable&lt;AuthenticationResponse&gt;&gt; GetAll()
+        {
+            var users = await _userService.GetAll();
+            var resources = _mapper.Map&lt;IEnumerable&lt;User&gt;, IEnumerable&lt;AuthenticationResponse&gt;&gt;(users);
+
+            return resources;
+        }
+
+        [AllowAnonymous]
+        [HttpPost(&quot;authenticate&quot;)]
+        public IActionResult Authenticate([FromBody] AuthenticationRequest request)
+        {
+            var response = _userService.Authenticate(request);
+
+            if (response == null)
+                return BadRequest(new { message = &quot;Usuario o  contrase&#241;a incorrecto&quot; });
+
+            return Ok(response);
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task&lt;IActionResult&gt; Register(RegisterRequest request)
+        {
+            UserResponse response =  await _userService.Register(request);
+
+            if (!response.Success)
+                return BadRequest(response.Message);
+
+            
+            var userResource = _mapper.Map&lt;User, AuthenticationResponse&gt;(response.Resource);
+
+            
+            return Ok(userResource);
+        }
+
+        [HttpGet(&quot;{userId}/profiles&quot;)]
+        [ProducesResponseType(typeof(ProfileResource), 200)]
+        [ProducesResponseType(typeof(BadRequestResult), 404)]
+        public async Task&lt;IActionResult&gt; GetAsync(int userId)
+        {
+            var result = await _profileService.GetByUserIdAsync(userId);
+
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            var profileResource = _mapper.Map&lt;Domain.Models.Profile, ProfileResource&gt;(result.Resource);
+            return Ok(profileResource);
+        }
+
+
+        [HttpPost(&quot;{userId}/plans/{planId}/profiles&quot;)]
+
+        public async Task&lt;IActionResult&gt; PostAsync([FromBody] SaveProfileResource resource, int userId,int planId)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState.GetErrorMessages());
+
+            var profile = _mapper.Map&lt;SaveProfileResource, Domain.Models.Profile&gt;(resource);
+            var result = await _profileService.SaveAsync(profile, planId,userId);
+
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            var profileResource = _mapper.Map&lt;Domain.Models.Profile, ProfileResource&gt;(result.Resource);
+
+            return Ok(profileResource);
+        }
+
+
+        [HttpPost(&quot;{userId}/plans/{planId}/leaseholders&quot;)]
+        public async Task&lt;IActionResult&gt; PostAsync([FromBody] SaveLeaseholderResource resource, int userId, int planId)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState.GetErrorMessages());
+
+            var leaseholder = _mapper.Map&lt;SaveLeaseholderResource, Leaseholder&gt;(resource);
+            var result = await _leaseholderService.SaveAsync(leaseholder, planId, userId);
+
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            var leaseholderResource = _mapper.Map&lt;Leaseholder, LeaseholderResource&gt;(result.Resource);
+
+            return Ok(leaseholderResource);
+        }
+
+        [HttpPost(&quot;{userId}/plans/{planId}/landlords&quot;)]
+        public async Task&lt;IActionResult&gt; PostAsync([FromBody] SaveLandlordResource resource, int userId, int planId)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState.GetErrorMessages());
+
+            var landlord = _mapper.Map&lt;SaveLandlordResource, Landlord&gt;(resource);
+            var result = await _landlordService.SaveAsync(landlord, planId, userId);
+
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            var landlordResource = _mapper.Map&lt;Landlord, LandlordResource&gt;(result.Resource);
+
+            return Ok(landlordResource);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[28,9,28,179,0],[29,9,29,10,0],[30,13,30,40,0],[31,13,31,30,0],[32,13,32,46,0],[33,13,33,54,0],[34,13,34,48,0],[35,9,35,10,0],[47,9,47,10,0],[48,13,48,53,0],[49,13,49,104,0],[51,13,51,30,0],[52,9,52,10,0],[57,9,57,10,0],[58,13,58,63,0],[60,13,60,34,0],[61,17,61,89,0],[63,13,63,33,0],[64,9,64,10,0],[69,9,69,10,0],[70,13,70,75,0],[72,13,72,35,0],[73,17,73,53,0],[76,13,76,93,0],[79,13,79,37,0],[80,9,80,10,0],[86,9,86,10,0],[87,13,87,73,0],[89,13,89,33,0],[90,17,90,51,0],[92,13,92,104,0],[93,13,93,40,0],[94,9,94,10,0],[100,9,100,10,0],[101,13,101,37,0],[102,17,102,66,0],[104,13,104,93,0],[105,13,105,82,0],[107,13,107,33,0],[108,17,108,51,0],[110,13,110,104,0],[112,13,112,40,0],[113,9,113,10,0],[118,9,118,10,0],[119,13,119,37,0],[120,17,120,66,0],[122,13,122,91,0],[123,13,123,91,0],[125,13,125,33,0],[126,17,126,51,0],[128,13,128,102,0],[130,13,130,44,0],[131,9,131,10,0],[135,9,135,10,0],[136,13,136,37,0],[137,17,137,66,0],[139,13,139,82,0],[140,13,140,85,0],[142,13,142,33,0],[143,17,143,51,0],[145,13,145,93,0],[147,13,147,41,0],[148,9,148,10,0]]);
+    </script>
+  </body>
+</html>

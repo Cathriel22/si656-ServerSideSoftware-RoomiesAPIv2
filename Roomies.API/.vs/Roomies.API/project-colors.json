@@ -1,0 +1,16 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "ad75c004-22b6-4089-bc17-4d1212894903": {
+      "ProjectGuid": "ad75c004-22b6-4089-bc17-4d1212894903",
+      "DisplayName": "Roomies.API",
+      "ColorIndex": 0
+    },
+    "cff544d4-f5af-4fef-a766-cbfd723c7d5b": {
+      "ProjectGuid": "cff544d4-f5af-4fef-a766-cbfd723c7d5b",
+      "DisplayName": "Roomies.API.Test",
+      "ColorIndex": 1
+    }
+  },
+  "NextColorIndex": 2
+}

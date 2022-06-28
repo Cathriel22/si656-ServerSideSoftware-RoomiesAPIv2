@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Extensions\StringExtensions.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Linq;
+
+namespace Roomies.API.Extensions
+{
+    public static class StringExtensions
+    {
+        public static string ToSnakeCase(this string str)
+        {
+            if (str != null)
+                return string.Concat(
+                    str.Select((x, i) =&gt; i &gt; 0 &amp;&amp;
+                    char.IsUpper(x) ? &quot;_&quot; + x.ToString() :
+                    x.ToString())).ToLower();
+
+            return str;
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[9,9,9,10,0],[10,13,10,29,0],[11,17,12,42,0],[12,42,14,33,0],[14,33,14,46,0],[16,13,16,24,0],[17,9,17,10,0]]);
+    </script>
+  </body>
+</html>

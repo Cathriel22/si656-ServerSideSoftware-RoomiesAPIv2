@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Profile\Controllers\LandlordsController.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Roomies.API.Domain.Models;
+using Roomies.API.Domain.Services;
+using Roomies.API.Extensions;
+using Roomies.API.Resources;
+using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Roomies.API.Controllers
+{
+    [Route(&quot;/api/[controller]&quot;)]
+    [Produces(&quot;application/json&quot;)]
+    [ApiController]
+    public class LandlordsController : ControllerBase
+    {
+        private readonly ILandlordService _landlordService;
+        private readonly IMapper _mapper;
+
+        public LandlordsController(ILandlordService landlordService, IMapper mapper)
+        {
+            _landlordService = landlordService;
+            _mapper = mapper;
+        }
+
+        [SwaggerOperation(
+           Summary = &quot;List all Landlords&quot;,
+           Description = &quot;List of Landlords&quot;,
+           OperationId = &quot;ListAllLandlords&quot;
+           )]
+        [SwaggerResponse(200, &quot;List of Landlords&quot;, typeof(IEnumerable&lt;LandlordResource&gt;))]
+        [HttpGet]
+        public async Task&lt;IEnumerable&lt;LandlordResource&gt;&gt; GetAllAsync()
+        {
+            var landlords = await _landlordService.ListAsync();
+            var resources = _mapper.Map&lt;IEnumerable&lt;Landlord&gt;, IEnumerable&lt;LandlordResource&gt;&gt;(landlords);
+
+            return resources;
+        }
+        [HttpGet(&quot;{id}&quot;)]
+        [ProducesResponseType(typeof(LandlordResource), 200)]
+        [ProducesResponseType(typeof(BadRequestResult), 404)]
+        public async Task&lt;IActionResult&gt; GetAsync(int id)
+        {
+            var result = await _landlordService.GetByIdAsync(id);
+
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            var landlordResource = _mapper.Map&lt;Landlord, LandlordResource&gt;(result.Resource);
+            return Ok(landlordResource);
+        }
+        //---------------------------
+
+        //-------------
+        [HttpPut(&quot;{id}&quot;)]
+        public async Task&lt;IActionResult&gt; PutAsync(int id, [FromBody] SaveLandlordResource resource)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState.GetErrorMessages());
+
+            var landlord = _mapper.Map&lt;SaveLandlordResource, Landlord&gt;(resource);
+            var result = await _landlordService.UpdateAsync(id, landlord);
+
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            var landlordResource = _mapper.Map&lt;Landlord, LandlordResource&gt;(result.Resource);
+
+            return Ok(landlordResource);
+
+        }
+
+        [HttpDelete(&quot;{id}&quot;)]
+        public async Task&lt;IActionResult&gt; DeleteAsync(int id)
+        {
+            var result = await _landlordService.DeleteAsync(id);
+
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            var landlordResource = _mapper.Map&lt;Landlord, LandlordResource&gt;(result.Resource);
+
+            return Ok(landlordResource);
+
+        }
+
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[23,9,23,85,0],[24,9,24,10,0],[25,13,25,48,0],[26,13,26,30,0],[27,9,27,10,0],[37,9,37,10,0],[38,13,38,64,0],[39,13,39,106,0],[41,13,41,30,0],[42,9,42,10,0],[47,9,47,10,0],[48,13,48,66,0],[50,13,50,33,0],[51,17,51,51,0],[53,13,53,93,0],[54,13,54,41,0],[55,9,55,10,0],[61,9,61,10,0],[62,13,62,37,0],[63,17,63,66,0],[65,13,65,82,0],[66,13,66,75,0],[68,13,68,33,0],[69,17,69,51,0],[71,13,71,93,0],[73,13,73,41,0],[75,9,75,10,0],[79,9,79,10,0],[80,13,80,65,0],[82,13,82,33,0],[83,17,83,51,0],[85,13,85,93,0],[87,13,87,41,0],[89,9,89,10,0]]);
+    </script>
+  </body>
+</html>

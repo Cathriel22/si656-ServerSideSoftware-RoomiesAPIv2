@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Exceptions\ApplicationException.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Roomies.API.Exceptions
+{
+    [Serializable]
+    public class ApplicationException:Exception
+    {
+        public ApplicationException() : base() { }
+
+        public ApplicationException(string message) : base(message) { }
+
+        public ApplicationException(string message, params object[] args)
+            : base(String.Format(CultureInfo.CurrentCulture, message, args)) { }
+
+        protected ApplicationException(System.Runtime.Serialization.SerializationInfo info,
+        System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[12,41,12,47,0],[12,48,12,49,0],[12,50,12,51,0],[14,55,14,68,0],[14,69,14,70,0],[14,71,14,72,0],[17,15,17,77,0],[17,78,17,79,0],[17,80,17,81,0],[20,66,20,85,0],[20,86,20,87,0],[20,88,20,89,0]]);
+    </script>
+  </body>
+</html>

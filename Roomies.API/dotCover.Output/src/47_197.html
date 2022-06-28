@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Plan\Persistence\Repositories\PlanRepository.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.EntityFrameworkCore;
+using Roomies.API.Domain.Models;
+using Roomies.API.Domain.Persistence.Contexts;
+using Roomies.API.Domain.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Roomies.API.Persistence.Repositories
+{
+    public class PlanRepository : BaseRepository, IPlanRepository
+    {
+        public PlanRepository(AppDbContext context) : base(context)
+        {
+        }
+
+        public async Task AddAsync(Domain.Models.Plan plan)
+        {
+            await _context.Plans.AddAsync(plan);
+        }
+
+        public async Task&lt;Domain.Models.Plan&gt; FindById(int id)
+        {
+            return await _context.Plans.FindAsync(id);
+        }
+
+        public async Task&lt;IEnumerable&lt;Domain.Models.Plan&gt;&gt; ListAsync()
+        {
+            return await _context.Plans.ToListAsync();
+        }
+
+        public void Remove(Domain.Models.Plan plan)
+        {
+            _context.Plans.Remove(plan);
+        }
+
+        public void Update(Domain.Models.Plan plan)
+        {
+            _context.Plans.Update(plan);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[14,55,14,68,0],[15,9,15,10,0],[16,9,16,10,0],[19,9,19,10,0],[20,13,20,49,0],[21,9,21,10,0],[24,9,24,10,0],[25,13,25,55,0],[26,9,26,10,0],[29,9,29,10,0],[30,13,30,55,0],[31,9,31,10,0],[34,9,34,10,0],[35,13,35,41,0],[36,9,36,10,0],[39,9,39,10,0],[40,13,40,41,0],[41,9,41,10,0]]);
+    </script>
+  </body>
+</html>

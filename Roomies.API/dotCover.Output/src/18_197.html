@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Publication\Persistence\Repositories\RuleRepository.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.EntityFrameworkCore;
+using Roomies.API.Domain.Persistence.Contexts;
+using Roomies.API.Persistence.Repositories;
+using Roomies.API.Publication.Domain.Models;
+using Roomies.API.Publication.Domain.Persistence.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Roomies.API.Publication.Persistence.Repositories
+{
+    public class RuleRepository : BaseRepository, IRuleRepository
+    {
+        public RuleRepository(AppDbContext context) : base(context)
+        {
+        }
+
+        public async Task AddAsync(Rule rule)
+        {
+            await _context.Rules.AddAsync(rule);
+        }
+
+        public async Task&lt;Rule&gt; FindById(int id)
+        {
+            return await _context.Rules.FindAsync(id);
+        }
+
+        public async Task&lt;IEnumerable&lt;Rule&gt;&gt; ListAsync()
+        {
+            return await _context.Rules.ToListAsync();
+        }
+
+        public async Task&lt;IEnumerable&lt;Rule&gt;&gt; ListByPostId(int postId)
+        {
+            return await _context.Rules
+                .Where(r=&gt;r.PostId==postId)
+                .ToListAsync();
+        }
+
+        public void Remove(Rule rule)
+        {
+            _context.Rules.Remove(rule);
+        }
+
+        public void Update(Rule rule)
+        {
+            _context.Rules.Update(rule);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,55,15,68,0],[16,9,16,10,0],[17,9,17,10,0],[20,9,20,10,0],[21,13,21,49,0],[22,9,22,10,0],[25,9,25,10,0],[26,13,26,55,0],[27,9,27,10,0],[30,9,30,10,0],[31,13,31,55,0],[32,9,32,10,0],[35,9,35,10,0],[36,13,38,32,0],[39,9,39,10,0],[42,9,42,10,0],[43,13,43,41,0],[44,9,44,10,0],[47,9,47,10,0],[48,13,48,41,0],[49,9,49,10,0]]);
+    </script>
+  </body>
+</html>

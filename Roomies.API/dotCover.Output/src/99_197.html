@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Domain\Persistence\Contexts\AppDbContext.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using Microsoft.EntityFrameworkCore;
+using Roomies.API.Domain.Models;
+using Roomies.API.Extensions;
+using Roomies.API.Publication.Domain.Models;
+
+namespace Roomies.API.Domain.Persistence.Contexts
+{
+    public class AppDbContext : DbContext
+    {
+        public DbSet&lt;FavouritePost&gt; FavouritePosts { get; set; }
+        public DbSet&lt;Landlord&gt; Landlords { get; set; }
+        public DbSet&lt;Leaseholder&gt; Leaseholders { get; set; }
+        public DbSet&lt;PaymentMethod&gt; PaymentMethods { get; set; }
+        public DbSet&lt;Domain.Models.Plan&gt; Plans { get; set; }
+        public DbSet&lt;Post&gt; Posts { get; set; }
+        public DbSet&lt;Review&gt; Reviews { get; set; }
+        public DbSet&lt;Profile&gt; Profiles { get; set; }
+        public DbSet&lt;ProfilePaymentMethod&gt; UserPaymentMethods { get; set; }
+        public DbSet&lt;User&gt; Users { get; set; }
+        public DbSet&lt;Rule&gt; Rules { get; set; }
+
+        public AppDbContext(DbContextOptions&lt;AppDbContext&gt; options) : base(options)
+        {
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            //Rule Entity
+            modelBuilder.Entity&lt;Rule&gt;().ToTable(&quot;Rules&quot;);
+
+            modelBuilder.Entity&lt;Rule&gt;().HasKey( r=&gt; r.Id);
+            modelBuilder.Entity&lt;Rule&gt;().Property(r =&gt; r.Id).IsRequired().ValueGeneratedOnAdd();
+
+
+            //FavouritePost Entity Intermediate Table
+            modelBuilder.Entity&lt;FavouritePost&gt;().ToTable(&quot;FavouritePosts&quot;);
+
+            modelBuilder.Entity&lt;FavouritePost&gt;().HasKey
+                (p =&gt; new { p.PostId, p.LeaseholderId });
+
+            modelBuilder.Entity&lt;FavouritePost&gt;()
+                 .HasOne(pt =&gt; pt.Post)
+                 .WithMany(p =&gt; p.FavouritePosts)
+                 .HasForeignKey(pt =&gt; pt.PostId);
+
+            modelBuilder.Entity&lt;FavouritePost&gt;()
+                .HasOne(pt =&gt; pt.Leaseholder)
+                .WithMany(t =&gt; t.FavouritePosts)
+                .HasForeignKey(pt =&gt; pt.LeaseholderId);
+
+
+            //Profile Entity
+            modelBuilder.Entity&lt;Profile&gt;().ToTable(&quot;Profiles&quot;);
+                           
+            modelBuilder.Entity&lt;Profile&gt;().HasKey(p =&gt; p.Id);
+            modelBuilder.Entity&lt;Profile&gt;().Property(p =&gt; p.Id).IsRequired().ValueGeneratedOnAdd();
+            modelBuilder.Entity&lt;Profile&gt;().Property(p =&gt; p.Name).IsRequired().HasMaxLength(50);
+            modelBuilder.Entity&lt;Profile&gt;().Property(p =&gt; p.LastName).IsRequired().HasMaxLength(50);
+            modelBuilder.Entity&lt;Profile&gt;().Property(p =&gt; p.CellPhone).IsRequired().HasMaxLength(9);
+            modelBuilder.Entity&lt;Profile&gt;().Property(p =&gt; p.IdCard).IsRequired().HasMaxLength(8);
+            modelBuilder.Entity&lt;Profile&gt;().Property(p =&gt; p.Description).IsRequired().HasMaxLength(240);
+            modelBuilder.Entity&lt;Profile&gt;().Property(p =&gt; p.Birthday).IsRequired();
+            modelBuilder.Entity&lt;Profile&gt;().Property(p =&gt; p.Department).IsRequired().HasMaxLength(25);
+            modelBuilder.Entity&lt;Profile&gt;().Property(p =&gt; p.Province).IsRequired().HasMaxLength(25);
+            modelBuilder.Entity&lt;Profile&gt;().Property(p =&gt; p.District).IsRequired().HasMaxLength(25);
+            modelBuilder.Entity&lt;Profile&gt;().Property(p =&gt; p.Address).IsRequired().HasMaxLength(100);
+            modelBuilder.Entity&lt;Profile&gt;().Property(p =&gt; p.StartSubscription).IsRequired();
+            modelBuilder.Entity&lt;Profile&gt;().Property(p =&gt; p.EndSubsciption).IsRequired();
+
+            //User Entity
+            modelBuilder.Entity&lt;User&gt;().ToTable(&quot;Users&quot;);
+                           
+            modelBuilder.Entity&lt;User&gt;().HasKey(p =&gt; p.Id);
+            modelBuilder.Entity&lt;User&gt;().Property(p =&gt; p.Id).IsRequired().ValueGeneratedOnAdd();
+            modelBuilder.Entity&lt;User&gt;().Property(p =&gt; p.FirstName).IsRequired();
+            modelBuilder.Entity&lt;User&gt;().Property(p =&gt; p.LastName).IsRequired();
+            modelBuilder.Entity&lt;User&gt;().Property(p =&gt; p.Username).IsRequired();
+            modelBuilder.Entity&lt;User&gt;().Property(p =&gt; p.PasswordHash).IsRequired();
+
+            // Relationships 
+            modelBuilder.Entity&lt;Profile&gt;()
+                .HasOne(owp =&gt; owp.User)
+                .WithOne(u =&gt; u.Profile)
+                .HasForeignKey&lt;Profile&gt;(owp =&gt; owp.UserId);
+
+
+            //Landlord Entity
+            modelBuilder.Entity&lt;Landlord&gt;().ToTable(&quot;Landlords&quot;);
+
+
+            // Relationships 
+            modelBuilder.Entity&lt;Landlord&gt;()
+                .HasMany(p =&gt; p.Posts)
+                .WithOne(p =&gt; p.Landlord) ///
+                .HasForeignKey(p =&gt; p.LandlordId);
+
+
+            //leaseholder Entity
+            modelBuilder.Entity&lt;Leaseholder&gt;().ToTable(&quot;Leaseholders&quot;);
+
+           
+            modelBuilder.Entity&lt;Leaseholder&gt;()
+                .HasMany(p =&gt; p.Reviews)
+                .WithOne(p =&gt; p.Leaseholder)
+                .HasForeignKey(p =&gt; p.LeaseholderId);
+
+
+            // PaymentMethod Entity
+            modelBuilder.Entity&lt;PaymentMethod&gt;().ToTable(&quot;PaymentMethods&quot;);
+
+            modelBuilder.Entity&lt;PaymentMethod&gt;().HasKey(e =&gt; e.Id);
+            modelBuilder.Entity&lt;PaymentMethod&gt;().Property(e =&gt; e.Id).IsRequired().ValueGeneratedOnAdd();
+            modelBuilder.Entity&lt;PaymentMethod&gt;().Property(e =&gt; e.CVV).IsRequired().HasMaxLength(3);
+            modelBuilder.Entity&lt;PaymentMethod&gt;().Property(e =&gt; e.ExpiryDate).IsRequired();
+            //--------------------
+
+            // Plan Entity
+            modelBuilder.Entity&lt;Domain.Models.Plan&gt;().ToTable(&quot;Plans&quot;);
+
+            // Constraints
+
+            modelBuilder.Entity&lt;Domain.Models.Plan&gt;().HasKey(p =&gt; p.Id);
+            modelBuilder.Entity&lt;Domain.Models.Plan&gt;().Property(p =&gt; p.Id).IsRequired().ValueGeneratedOnAdd();
+            modelBuilder.Entity&lt;Domain.Models.Plan&gt;().Property(p =&gt; p.Price).IsRequired();
+            modelBuilder.Entity&lt;Domain.Models.Plan&gt;().Property(p =&gt; p.Name).IsRequired().HasMaxLength(50);
+            modelBuilder.Entity&lt;Domain.Models.Plan&gt;().Property(p =&gt; p.Description).IsRequired().HasMaxLength(200);
+
+            // Posts Entity
+
+            modelBuilder.Entity&lt;Post&gt;().ToTable(&quot;Posts&quot;);
+
+            modelBuilder.Entity&lt;Post&gt;().HasKey(p =&gt; p.Id);
+            modelBuilder.Entity&lt;Post&gt;().Property(p =&gt; p.Id).IsRequired().ValueGeneratedOnAdd();
+            modelBuilder.Entity&lt;Post&gt;().Property(p =&gt; p.Title).IsRequired().HasMaxLength(100);
+            modelBuilder.Entity&lt;Post&gt;().Property(p =&gt; p.Description).IsRequired().HasMaxLength(500);
+
+            modelBuilder.Entity&lt;Post&gt;().Property(p =&gt; p.Address).IsRequired().HasMaxLength(50);
+            modelBuilder.Entity&lt;Post&gt;().Property(p =&gt; p.Province).IsRequired().HasMaxLength(25);
+            modelBuilder.Entity&lt;Post&gt;().Property(p =&gt; p.District).IsRequired().HasMaxLength(25);
+            modelBuilder.Entity&lt;Post&gt;().Property(p =&gt; p.Department).IsRequired().HasMaxLength(25);
+            modelBuilder.Entity&lt;Post&gt;().Property(p =&gt; p.Price).IsRequired();
+            modelBuilder.Entity&lt;Post&gt;().Property(p =&gt; p.RoomQuantity).IsRequired();
+            modelBuilder.Entity&lt;Post&gt;().Property(p =&gt; p.PostDate).IsRequired();
+            
+
+            //Relationships
+            modelBuilder.Entity&lt;Post&gt;()
+               .HasMany(p =&gt; p.Reviews)
+               .WithOne(p =&gt; p.Post)
+               .HasForeignKey(p =&gt; p.PostId);
+
+            modelBuilder.Entity&lt;Post&gt;()
+                .HasMany(p =&gt; p.Rules)
+                .WithOne(r =&gt; r.Post)
+                .HasForeignKey(r =&gt; r.PostId);
+            //-------------------------------------
+
+            // Review Entity
+
+            modelBuilder.Entity&lt;Review&gt;().ToTable(&quot;Reviews&quot;);
+
+            modelBuilder.Entity&lt;Review&gt;().HasKey(e =&gt; e.Id);
+            modelBuilder.Entity&lt;Review&gt;().Property(e =&gt; e.Id).IsRequired().ValueGeneratedOnAdd();
+            modelBuilder.Entity&lt;Review&gt;().Property(e =&gt; e.Content).IsRequired().HasMaxLength(300);
+            modelBuilder.Entity&lt;Review&gt;().Property(e =&gt; e.Date).IsRequired();
+
+            //UserPaymentMethod Entity Intermediate Table
+            modelBuilder.Entity&lt;ProfilePaymentMethod&gt;().ToTable(&quot;ProfilePaymentMethods&quot;);
+
+            modelBuilder.Entity&lt;ProfilePaymentMethod&gt;().HasKey(p =&gt; new { p.ProfileId, p.PaymentMethodId });
+
+            modelBuilder.Entity&lt;ProfilePaymentMethod&gt;()
+                 .HasOne(pt =&gt; pt.Profile)
+                 .WithMany(p =&gt; p.ProfilePaymentMethods)
+                 .HasForeignKey(pt =&gt; pt.ProfileId);
+
+            modelBuilder.Entity&lt;ProfilePaymentMethod&gt;()
+                .HasOne(pt =&gt; pt.PaymentMethod)
+                .WithMany(t =&gt; t.UserPaymentMethods)
+                .HasForeignKey(pt =&gt; pt.PaymentMethodId);
+
+            modelBuilder.ApplySnakeCaseNamingConvention();
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[11,54,11,58,0],[11,59,11,63,0],[12,44,12,48,0],[12,49,12,53,0],[13,50,13,54,0],[13,55,13,59,0],[14,54,14,58,0],[14,59,14,63,0],[15,50,15,54,0],[15,55,15,59,0],[16,36,16,40,0],[16,41,16,45,0],[17,40,17,44,0],[17,45,17,49,0],[18,42,18,46,0],[18,47,18,51,0],[19,65,19,69,0],[19,70,19,74,0],[20,36,20,40,0],[20,41,20,45,0],[21,36,21,40,0],[21,41,21,45,0],[23,71,23,84,0],[24,9,24,10,0],[25,9,25,10,0],[28,9,28,10,0],[29,13,29,48,0],[32,13,32,58,0],[34,13,34,59,0],[35,13,35,96,0],[39,13,39,76,0],[41,13,42,58,0],[44,13,47,50,0],[49,13,52,56,0],[56,13,56,64,0],[58,13,58,62,0],[59,13,59,99,0],[60,13,60,96,0],[61,13,61,100,0],[62,13,62,100,0],[63,13,63,97,0],[64,13,64,104,0],[65,13,65,83,0],[66,13,66,102,0],[67,13,67,100,0],[68,13,68,100,0],[69,13,69,100,0],[70,13,70,92,0],[71,13,71,89,0],[74,13,74,58,0],[76,13,76,59,0],[77,13,77,96,0],[78,13,78,81,0],[79,13,79,80,0],[80,13,80,80,0],[81,13,81,84,0],[84,13,87,60,0],[91,13,91,66,0],[95,13,98,51,0],[102,13,102,72,0],[105,13,108,54,0],[112,13,112,76,0],[114,13,114,68,0],[115,13,115,105,0],[116,13,116,100,0],[117,13,117,91,0],[121,13,121,72,0],[125,13,125,73,0],[126,13,126,110,0],[127,13,127,91,0],[128,13,128,107,0],[129,13,129,115,0],[133,13,133,58,0],[135,13,135,59,0],[136,13,136,96,0],[137,13,137,95,0],[138,13,138,101,0],[140,13,140,96,0],[141,13,141,97,0],[142,13,142,97,0],[143,13,143,99,0],[144,13,144,77,0],[145,13,145,84,0],[146,13,146,80,0],[150,13,153,46,0],[155,13,158,47,0],[163,13,163,62,0],[165,13,165,61,0],[166,13,166,98,0],[167,13,167,99,0],[168,13,168,78,0],[171,13,171,90,0],[173,13,173,109,0],[175,13,178,53,0],[180,13,183,58,0],[185,13,185,59,0],[186,9,186,10,0]]);
+    </script>
+  </body>
+</html>

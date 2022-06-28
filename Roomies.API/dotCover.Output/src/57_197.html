@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Plan\Controllers\PlanProfilesController.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Roomies.API.Domain.Models;
+using Roomies.API.Domain.Services;
+using Roomies.API.Resources;
+
+namespace Roomies.API.Controllers
+{
+    [Route(&quot;/api/plans/{planId}/profiles&quot;)]
+    public class PlanProfilesController
+    {
+        private readonly IProfileService _profileService;
+        private readonly IMapper _mapper;
+
+        public PlanProfilesController(IProfileService profileService, IMapper mapper)
+        {
+            _profileService = profileService;
+            _mapper = mapper;
+        }
+
+        [HttpGet]
+        public async Task&lt;IEnumerable&lt;ProfileResource&gt;&gt; GetAllByPlanIdAsync(int planId)
+        {
+            var profiles = await _profileService.ListByPlanIdAsync(planId);
+            var resources = _mapper.Map&lt;IEnumerable&lt;Domain.Models.Profile&gt;, IEnumerable&lt;ProfileResource&gt;&gt;(profiles);
+
+            return resources;
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[18,9,18,86,0],[19,9,19,10,0],[20,13,20,46,0],[21,13,21,30,0],[22,9,22,10,0],[26,9,26,10,0],[27,13,27,76,0],[28,13,28,117,0],[30,13,30,30,0],[31,9,31,10,0]]);
+    </script>
+  </body>
+</html>

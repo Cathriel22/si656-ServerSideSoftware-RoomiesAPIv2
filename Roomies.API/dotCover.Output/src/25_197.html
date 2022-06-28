@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Plan\Services\PlanService.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Roomies.API.Domain.Models;
+using Roomies.API.Domain.Persistence.Repositories;
+using Roomies.API.Domain.Repositories;
+using Roomies.API.Domain.Services;
+using Roomies.API.Domain.Services.Communications;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Roomies.API.Services
+{
+    public class PlanService : IPlanService
+    {
+        private readonly IPlanRepository _planRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IProfileRepository _userRepository;
+
+        public PlanService(IPlanRepository planRepository, IUnitOfWork unitOfWork, IProfileRepository userRepository)
+        {
+            _planRepository = planRepository;
+            _unitOfWork = unitOfWork;
+            _userRepository = userRepository;
+        }
+
+
+        public async Task&lt;PlanResponse&gt; DeleteAsync(int id)
+        {
+            var existingPlan= await _planRepository.FindById(id);
+
+            if (existingPlan == null)
+                return new PlanResponse(&quot;Plan inexistente&quot;);
+
+            try
+            {
+                if (existingPlan.Profiles != null)
+                {
+                    existingPlan.Profiles.ForEach(delegate (Profile user)
+                {
+                    _userRepository.Remove(user);
+                });
+                }
+
+                _planRepository.Remove(existingPlan);
+                await _unitOfWork.CompleteAsync();
+
+                return new PlanResponse(existingPlan);
+            }
+            catch (Exception ex)
+            {
+                return new PlanResponse($&quot;Un error ocurri&#243; al buscar el plan: {ex.Message}&quot;);
+            }
+        }
+
+        public async Task&lt;PlanResponse&gt; GetByIdAsync(int id)
+        {
+            var existingPlan = await _planRepository.FindById(id);
+
+            if (existingPlan == null)
+                return new PlanResponse(&quot;Plan inexistente&quot;);
+
+            return new PlanResponse(existingPlan);
+        }
+
+        public async Task&lt;IEnumerable&lt;Domain.Models.Plan&gt;&gt; ListAsync()
+        {
+            return await _planRepository.ListAsync();
+        }
+
+        public async Task&lt;PlanResponse&gt; SaveAsync(Domain.Models.Plan plan)
+        {
+            try
+            {
+                await _planRepository.AddAsync(plan);
+                await _unitOfWork.CompleteAsync();
+
+                return new PlanResponse(plan);
+            }
+            catch (Exception ex)
+            {
+                return new PlanResponse($&quot;Un error ocurri&#243; al guardar el plan: {ex.Message}&quot;);
+            }
+        }
+
+        public async Task&lt;PlanResponse&gt; UpdateAsync(int id, Domain.Models.Plan plan)
+        {
+            var existingPlan = await _planRepository.FindById(id);
+
+            if (existingPlan == null)
+                return new PlanResponse(&quot;Plan inexistente&quot;);
+
+            existingPlan.Name = plan.Name;
+            existingPlan.Description = plan.Description;
+            existingPlan.Price = plan.Price;
+
+            try
+            {
+                _planRepository.Update(existingPlan);
+                await _unitOfWork.CompleteAsync();
+
+                return new PlanResponse(existingPlan);
+            }
+            catch (Exception ex)
+            {
+                return new PlanResponse($&quot;Un error ocurri&#243; al actualizar el plan: {ex.Message}&quot;);
+            }
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[19,9,19,118,1],[20,9,20,10,1],[21,13,21,46,1],[22,13,22,38,1],[23,13,23,46,1],[24,9,24,10,1],[28,9,28,10,0],[29,13,29,66,0],[31,13,31,38,0],[32,17,32,61,0],[35,13,35,14,0],[36,17,36,51,0],[37,17,37,18,0],[38,21,39,17,0],[39,17,39,18,0],[39,18,40,21,0],[40,21,40,50,0],[40,50,41,17,0],[41,17,41,18,0],[41,18,41,20,0],[42,17,42,18,0],[44,17,44,54,0],[45,17,45,51,0],[47,17,47,55,0],[49,13,49,33,0],[50,13,50,14,0],[51,17,51,94,0],[53,9,53,10,0],[56,9,56,10,1],[57,13,57,67,1],[59,13,59,38,1],[60,17,60,61,1],[62,13,62,51,0],[63,9,63,10,1],[66,9,66,10,1],[67,13,67,54,1],[68,9,68,10,1],[71,9,71,10,1],[73,13,73,14,1],[74,17,74,54,1],[75,17,75,51,1],[77,17,77,47,1],[79,13,79,33,0],[80,13,80,14,0],[81,17,81,95,0],[83,9,83,10,1],[86,9,86,10,1],[87,13,87,67,1],[89,13,89,38,1],[90,17,90,61,0],[92,13,92,43,1],[93,13,93,57,1],[94,13,94,45,1],[97,13,97,14,1],[98,17,98,54,1],[99,17,99,51,1],[101,17,101,55,1],[103,13,103,33,0],[104,13,104,14,0],[105,17,105,98,0],[107,9,107,10,1]]);
+    </script>
+  </body>
+</html>

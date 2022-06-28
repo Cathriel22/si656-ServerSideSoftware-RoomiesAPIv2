@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Payment\Controllers\ProfilePaymentMethodsController.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Roomies.API.Domain.Models;
+using Roomies.API.Domain.Services;
+using Roomies.API.Extensions;
+using Roomies.API.Resources;
+using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Roomies.API.Controllers
+{
+    [Route(&quot;/api/profiles/{profileId}/paymentMethods&quot;)]
+    public class ProfilePaymentMethodsController:ControllerBase
+    {
+        private readonly IPaymentMethodService _paymentMethodService;
+        private readonly IProfilePaymentMethodService _profilePaymentMethodService;
+        private readonly IMapper _mapper;
+
+        public ProfilePaymentMethodsController(IPaymentMethodService paymentMethodService , IProfilePaymentMethodService userPaymentMethodService, IMapper mapper)
+        {
+            _paymentMethodService = paymentMethodService;
+            _profilePaymentMethodService = userPaymentMethodService;
+            _mapper = mapper;
+        }
+
+        [HttpGet]
+        public async Task&lt;IEnumerable&lt;PaymentMethodResource&gt;&gt; GetAllByProfileTdAsync(int profileId)
+        {
+            var paymentMethods = await _paymentMethodService.ListByProfileIdAsync(profileId);
+            var resources = _mapper.Map&lt;IEnumerable&lt;PaymentMethod&gt;, IEnumerable&lt;PaymentMethodResource&gt;&gt;(paymentMethods);
+
+            return resources;
+        }
+
+        [HttpPost(&quot;{paymentMethodId}&quot;)]
+        public async Task&lt;IActionResult&gt; AssignProfilePaymentMethod(int profileId, int paymentMethodId)
+        {
+            var result = await _profilePaymentMethodService.AssignProfilePaymentMethodAsync(profileId, paymentMethodId);
+
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            var paymentMethodResource = _mapper.Map&lt;PaymentMethod, PaymentMethodResource&gt;(result.Resource.PaymentMethod);
+
+            return Ok(paymentMethodResource);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[22,9,22,163,0],[23,9,23,10,0],[24,13,24,58,0],[25,13,25,69,0],[26,13,26,30,0],[27,9,27,10,0],[31,9,31,10,0],[32,13,32,94,0],[33,13,33,121,0],[35,13,35,30,0],[36,9,36,10,0],[40,9,40,10,0],[41,13,41,121,0],[43,13,43,33,0],[44,17,44,51,0],[46,13,46,122,0],[48,13,48,46,0],[49,9,49,10,0]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Publication\Services\RuleService.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Roomies.API.Domain.Repositories;
+using Roomies.API.Publication.Domain.Models;
+using Roomies.API.Publication.Domain.Persistence.Repositories;
+using Roomies.API.Publication.Domain.Services;
+using Roomies.API.Publication.Domain.Services.Communication;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Roomies.API.Publication.Services
+{
+    public class RuleService : IRuleService
+    {
+        private readonly IRuleRepository _ruleRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IPostRepository _postRepository;
+
+        public RuleService(IRuleRepository ruleRepository, IUnitOfWork unitOfWork, IPostRepository postRepository)
+        {
+            _postRepository = postRepository;
+            _ruleRepository = ruleRepository;
+            _unitOfWork = unitOfWork;
+        }
+
+        public async Task&lt;RuleResponse&gt; DeleteAsync(int id)
+        {
+            var existingRule = await _ruleRepository.FindById(id);
+
+            if (existingRule == null)
+                return new RuleResponse(&quot;Rule inexistente&quot;);
+
+            try
+            {
+                _ruleRepository.Remove(existingRule);
+                await _unitOfWork.CompleteAsync();
+
+                return new RuleResponse(existingRule);
+            }
+            catch(Exception ex)
+            {
+                return new RuleResponse($&quot;Un error ocurri&#243; al buscar la regla: {ex.Message}&quot;);
+            }
+
+        }
+
+        public async Task&lt;RuleResponse&gt; GetByIdAsync(int id)
+        {
+            var existingRule = await _ruleRepository.FindById(id);
+
+            if (existingRule == null)
+                return new RuleResponse(&quot;Rule inexistente&quot;);
+
+            return new RuleResponse(existingRule);
+        }
+
+        public async Task&lt;IEnumerable&lt;Rule&gt;&gt; ListAsync()
+        {
+            return await _ruleRepository.ListAsync();
+        }
+
+        public async Task&lt;IEnumerable&lt;Rule&gt;&gt; ListByPostId(int postId)
+        {
+            return await _ruleRepository.ListByPostId(postId);
+        }
+
+        public async Task&lt;RuleResponse&gt; SaveAsync(int postId, Rule rule)
+        {
+            var existingPost = await _postRepository.FindById(postId);
+
+            if (existingPost == null)
+                return new RuleResponse(&quot;Post inexistente&quot;);
+
+            try
+            {
+                rule.PostId = postId;
+
+                await _ruleRepository.AddAsync(rule);
+                await _unitOfWork.CompleteAsync();
+
+                return new RuleResponse(rule);
+            }
+            catch(Exception ex)
+            {
+                return new RuleResponse($&quot;Un error ocurri&#243; al guardar la regla: {ex.Message}&quot;);
+            }
+        }
+
+        public async Task&lt;RuleResponse&gt; UpdateAsync(int id, Rule ruleRequest)
+        {
+            var existingRule = await _ruleRepository.FindById(id);
+
+            if (existingRule== null)
+                return new RuleResponse(&quot;Post inexistente&quot;);
+
+            existingRule.Title = ruleRequest.Title;
+            existingRule.Description = ruleRequest.Description;
+
+            try
+            {
+                _ruleRepository.Update(existingRule);
+                await _unitOfWork.CompleteAsync();
+
+                return new RuleResponse(existingRule);
+            }
+            catch(Exception ex)
+            {
+                return new RuleResponse($&quot;Un error ocurri&#243; el actualizar la regla: {ex.Message}&quot;);
+            }
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[19,9,19,115,1],[20,9,20,10,1],[21,13,21,46,1],[22,13,22,46,1],[23,13,23,38,1],[24,9,24,10,1],[27,9,27,10,0],[28,13,28,67,0],[30,13,30,38,0],[31,17,31,61,0],[34,13,34,14,0],[35,17,35,54,0],[36,17,36,51,0],[38,17,38,55,0],[40,13,40,32,0],[41,13,41,14,0],[42,17,42,95,0],[45,9,45,10,0],[48,9,48,10,1],[49,13,49,67,1],[51,13,51,38,1],[52,17,52,61,1],[54,13,54,51,0],[55,9,55,10,1],[58,9,58,10,1],[59,13,59,54,1],[60,9,60,10,1],[63,9,63,10,1],[64,13,64,63,1],[65,9,65,10,1],[68,9,68,10,1],[69,13,69,71,1],[71,13,71,38,1],[72,17,72,61,0],[75,13,75,14,1],[76,17,76,38,1],[78,17,78,54,1],[79,17,79,51,1],[81,17,81,47,1],[83,13,83,32,0],[84,13,84,14,0],[85,17,85,96,0],[87,9,87,10,1],[90,9,90,10,1],[91,13,91,67,1],[93,13,93,37,1],[94,17,94,61,0],[96,13,96,52,1],[97,13,97,64,1],[100,13,100,14,1],[101,17,101,54,1],[102,17,102,51,1],[104,17,104,55,1],[106,13,106,32,0],[107,13,107,14,0],[108,17,108,99,0],[110,9,110,10,1]]);
+    </script>
+  </body>
+</html>

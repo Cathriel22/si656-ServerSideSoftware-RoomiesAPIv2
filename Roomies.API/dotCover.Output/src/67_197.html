@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Publication\Controllers\ReviewsController.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Roomies.API.Domain.Models;
+using Roomies.API.Domain.Services;
+using Roomies.API.Extensions;
+using Roomies.API.Resources;
+using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+
+namespace Roomies.API.Controllers
+{
+    [Route(&quot;/api/[controller]&quot;)]
+    [Produces(&quot;application/json&quot;)]
+    [ApiController]
+    public class ReviewsController:ControllerBase
+    {
+        private readonly IReviewService _reviewService;
+        private readonly IMapper _mapper;
+
+        public ReviewsController(IReviewService reviewService, IMapper mapper)
+        {
+            _reviewService = reviewService;
+            _mapper = mapper;
+        }
+
+        [SwaggerOperation(
+           Summary = &quot;List all Reviews&quot;,
+           Description = &quot;List of Reviews&quot;,
+           OperationId = &quot;ListAllReviews&quot;
+           )]
+        [SwaggerResponse(200, &quot;List of Reviews&quot;, typeof(IEnumerable&lt;ReviewResource&gt;))]
+        [HttpGet]
+        public async Task&lt;IEnumerable&lt;ReviewResource&gt;&gt; GetAllAsync()
+        {
+            var reviews = await _reviewService.ListAsync();
+            var resources = _mapper.Map&lt;IEnumerable&lt;Review&gt;, IEnumerable&lt;ReviewResource&gt;&gt;(reviews);
+
+            return resources;
+        }
+
+        [HttpGet(&quot;{id}&quot;)]
+        [ProducesResponseType(typeof(ReviewResource), 200)]
+        [ProducesResponseType(typeof(BadRequestResult), 404)]
+        public async Task&lt;IActionResult&gt; GetAsync(int id)
+        {
+            var result = await _reviewService.GetByIdAsync(id);
+
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            var reviewResource = _mapper.Map&lt;Review, ReviewResource&gt;(result.Resource);
+            return Ok(reviewResource);
+        }
+
+        [HttpPost(&quot;leaseholders/{leaseholderId}/posts/{postId}/reviews&quot;)]
+        public async Task&lt;IActionResult&gt; PostAsync([FromBody] SaveReviewResource resource, int leaseholderId,int postId)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState.GetErrorMessages());
+
+            var review = _mapper.Map&lt;SaveReviewResource, Review&gt;(resource);
+            var result = await _reviewService.SaveAsync(review, leaseholderId,postId);
+
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            var reviewResource = _mapper.Map&lt;Review, ReviewResource&gt;(result.Resource);
+
+            return Ok(reviewResource);
+        }
+        
+        [HttpPut(&quot;{id}&quot;)]
+        public async Task&lt;IActionResult&gt; PutAsync(int id, [FromBody] SaveReviewResource resource)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState.GetErrorMessages());
+
+            var review = _mapper.Map&lt;SaveReviewResource, Review&gt;(resource);
+            var result = await _reviewService.UpdateAsync(id, review);
+
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            var reviewResource = _mapper.Map&lt;Review, ReviewResource&gt;(result.Resource);
+
+            return Ok(reviewResource);
+
+        }
+
+        [HttpDelete(&quot;{id}&quot;)]
+        public async Task&lt;IActionResult&gt; DeleteAsync(int id)
+        {
+            var result = await _reviewService.DeleteAsync(id);
+
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            var reviewResource = _mapper.Map&lt;Review, ReviewResource&gt;(result.Resource);
+
+            return Ok(reviewResource);
+
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[24,9,24,79,0],[25,9,25,10,0],[26,13,26,44,0],[27,13,27,30,0],[28,9,28,10,0],[38,9,38,10,0],[39,13,39,60,0],[40,13,40,100,0],[42,13,42,30,0],[43,9,43,10,0],[49,9,49,10,0],[50,13,50,64,0],[52,13,52,33,0],[53,17,53,51,0],[55,13,55,87,0],[56,13,56,39,0],[57,9,57,10,0],[61,9,61,10,0],[62,13,62,37,0],[63,17,63,66,0],[65,13,65,76,0],[66,13,66,87,0],[68,13,68,33,0],[69,17,69,51,0],[71,13,71,87,0],[73,13,73,39,0],[74,9,74,10,0],[78,9,78,10,0],[79,13,79,37,0],[80,17,80,66,0],[82,13,82,76,0],[83,13,83,71,0],[85,13,85,33,0],[86,17,86,51,0],[88,13,88,87,0],[90,13,90,39,0],[92,9,92,10,0],[96,9,96,10,0],[97,13,97,63,0],[99,13,99,33,0],[100,17,100,51,0],[102,13,102,87,0],[104,13,104,39,0],[106,9,106,10,0]]);
+    </script>
+  </body>
+</html>

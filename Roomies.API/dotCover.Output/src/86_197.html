@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Domain\Services\Communications\AuthenticationResponse.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Roomies.API.Domain.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Roomies.API.Domain.Services.Communications
+{
+    public class AuthenticationResponse
+    {
+        public int Id { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Username { get; set; }
+        public string Token { get; set; }
+        public AuthenticationResponse(User user, string token)
+        {
+            Id = user.Id;
+            FirstName = user.FirstName;
+            LastName = user.LastName;
+            Username = user.Username;
+            Token = token;
+        }
+
+        public AuthenticationResponse(string error)
+        {         
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[11,25,11,29,0],[11,30,11,34,0],[12,35,12,39,0],[12,40,12,44,0],[13,34,13,38,0],[13,39,13,43,0],[14,34,14,38,0],[14,39,14,43,0],[15,31,15,35,0],[15,36,15,40,0],[16,9,16,63,0],[17,9,17,10,0],[18,13,18,26,0],[19,13,19,40,0],[20,13,20,38,0],[21,13,21,38,0],[22,13,22,27,0],[23,9,23,10,0],[25,9,25,52,0],[26,9,26,10,0],[27,9,27,10,0]]);
+    </script>
+  </body>
+</html>

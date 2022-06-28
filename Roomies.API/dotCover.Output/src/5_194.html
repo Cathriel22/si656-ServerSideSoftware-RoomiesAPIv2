@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API.Test\PlanServiceTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using NUnit.Framework;
+using Moq;
+using FluentAssertions;
+using Roomies.API.Domain.Repositories;
+using Roomies.API.Services;
+using Roomies.API.Domain.Services.Communications;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using Roomies.API.Domain.Models;
+using Roomies.API.Domain.Persistence.Repositories;
+
+namespace Roomies.API.Test
+{
+    public class PlanServiceTest
+    {
+        [SetUp]
+        public void Setup()
+        {
+        }
+
+        [Test]
+        public async Task GetAllAsyncWhenNoPlanReturnsEmptyCollection()
+        {
+            // Arrange
+
+            var mockPlanRepository = GetDefaultIPlanRepositoryInstance();
+            var mockUnitOfWork = GetDefaultIUnitOfWorkInstance();
+            var mockProfileRepository = GetDefaultIProfileRepositoryInstance();
+
+            mockPlanRepository.Setup(r =&gt; r.ListAsync()).ReturnsAsync(new List&lt;Domain.Models.Plan&gt;());
+
+            var service = new PlanService(mockPlanRepository.Object, mockUnitOfWork.Object, mockProfileRepository.Object);
+
+            // Act
+
+            List&lt;Domain.Models.Plan&gt; result = (List&lt;Domain.Models.Plan&gt;)await service.ListAsync();
+            var planCount = result.Count;
+
+            // Assert
+
+            planCount.Should().Equals(0);
+
+        }
+
+        [Test]
+        public async Task GetByIdAsyncWhenInvalidIdReturnsCategoryNotFoundResponse()
+        {
+            // Arrange
+            var mockPlanRepository = GetDefaultIPlanRepositoryInstance();
+            var mockUnitOfWork = GetDefaultIUnitOfWorkInstance();
+            var mockUserRepository = GetDefaultIProfileRepositoryInstance();
+            var planId = 1;
+            Domain.Models.Plan plan = new Domain.Models.Plan();
+            mockPlanRepository.Setup(r =&gt; r.FindById(planId)).Returns(Task.FromResult&lt;Domain.Models.Plan&gt;(null));
+            var service = new PlanService(mockPlanRepository.Object, mockUnitOfWork.Object,mockUserRepository.Object);
+
+            // Act
+            PlanResponse result = await service.GetByIdAsync(planId);
+            var message = result.Message;
+
+            // Assert
+            message.Should().Be(&quot;Plan inexistente&quot;);
+        }
+
+        [Test]
+        public async Task SavePlanReturnsSave()
+        {
+            // Arrange
+
+            var mockPlanRepository = GetDefaultIPlanRepositoryInstance();
+
+            var mockUnitOfWork = GetDefaultIUnitOfWorkInstance();
+            var mockProfileRepository = GetDefaultIProfileRepositoryInstance();
+
+
+            Domain.Models.Plan plan = new Domain.Models.Plan
+            {
+                Id = 1
+
+            };
+
+            mockPlanRepository.Setup(u =&gt; u.AddAsync(plan)).Returns(Task.FromResult&lt;Domain.Models.Plan&gt;(plan));
+            mockPlanRepository.Setup(u =&gt; u.FindById(1)).Returns(Task.FromResult&lt;Domain.Models.Plan&gt;(plan));
+
+            var service = new PlanService(mockPlanRepository.Object, mockUnitOfWork.Object, mockProfileRepository.Object);
+
+            // Act
+
+            PlanResponse result = await service.SaveAsync(plan);
+
+            // Assert
+
+            result.Resource.Should().Be(plan);
+        }
+
+        [Test]
+        public async Task UpdatePlanReturnsUpdate()
+        {
+            // Arrange
+
+            var mockPlanRepository = GetDefaultIPlanRepositoryInstance();
+
+            var mockUnitOfWork = GetDefaultIUnitOfWorkInstance();
+            var mockProfileRepository = GetDefaultIProfileRepositoryInstance();
+
+
+            Domain.Models.Plan plan = new Domain.Models.Plan
+            {
+                Id = 1,
+                Name =  &quot;Leaseholder Plan&quot;
+
+            };
+
+            mockPlanRepository.Setup(u =&gt; u.AddAsync(plan)).Returns(Task.FromResult&lt;Domain.Models.Plan&gt;(plan));
+            mockPlanRepository.Setup(u =&gt; u.FindById(1)).Returns(Task.FromResult&lt;Domain.Models.Plan&gt;(plan));
+
+            var service = new PlanService(mockPlanRepository.Object, mockUnitOfWork.Object, mockProfileRepository.Object);
+
+            // Act
+
+            PlanResponse result = await service.UpdateAsync(1, plan);
+
+            // Assert
+
+            result.Resource.Should().Be(plan);
+        }
+
+        private static Mock&lt;IPlanRepository&gt; GetDefaultIPlanRepositoryInstance()
+        {
+            return new Mock&lt;IPlanRepository&gt;();
+        }
+        private static Mock&lt;IProfileRepository&gt; GetDefaultIProfileRepositoryInstance()
+        {
+            return new Mock&lt;IProfileRepository&gt;();
+        }
+
+        private static Mock&lt;IUnitOfWork&gt; GetDefaultIUnitOfWorkInstance()
+        {
+            return new Mock&lt;IUnitOfWork&gt;();
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[18,9,18,10,1],[19,9,19,10,1],[23,9,23,10,1],[26,13,26,74,1],[27,13,27,66,1],[28,13,28,80,1],[30,13,30,103,1],[32,13,32,123,1],[36,13,36,99,1],[37,13,37,42,1],[41,13,41,42,1],[43,9,43,10,1],[47,9,47,10,1],[49,13,49,74,1],[50,13,50,66,1],[51,13,51,77,1],[52,13,52,28,1],[53,13,53,64,1],[54,13,54,114,1],[55,13,55,119,1],[58,13,58,70,1],[59,13,59,42,1],[62,13,62,53,1],[63,9,63,10,1],[67,9,67,10,1],[70,13,70,74,1],[72,13,72,66,1],[73,13,73,80,1],[76,13,80,15,1],[82,13,82,112,1],[83,13,83,109,1],[85,13,85,123,1],[89,13,89,65,1],[93,13,93,47,1],[94,9,94,10,1],[98,9,98,10,1],[101,13,101,74,1],[103,13,103,66,1],[104,13,104,80,1],[107,13,112,15,1],[114,13,114,112,1],[115,13,115,109,1],[117,13,117,123,1],[121,13,121,70,1],[125,13,125,47,1],[126,9,126,10,1],[129,9,129,10,1],[130,13,130,48,1],[131,9,131,10,1],[133,9,133,10,1],[134,13,134,51,1],[135,9,135,10,1],[138,9,138,10,1],[139,13,139,44,1],[140,9,140,10,1]]);
+    </script>
+  </body>
+</html>

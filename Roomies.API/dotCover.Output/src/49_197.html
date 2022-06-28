@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Profile\Persistence\Repositories\LandlordRepository.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.EntityFrameworkCore;
+using Roomies.API.Domain.Models;
+using Roomies.API.Domain.Persistence.Contexts;
+using Roomies.API.Domain.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Roomies.API.Persistence.Repositories
+{
+    public class LandlordRepository : BaseRepository, ILandlordRepository
+    {
+        public LandlordRepository(AppDbContext context) : base(context)
+        {
+        }
+
+        public async Task AddAsync(Landlord landlord)
+        {
+            await _context.Landlords.AddAsync(landlord);
+        }
+
+        public async Task&lt;Landlord&gt; FindById(int id)
+        {            
+            return await _context.Landlords.Include(l=&gt;l.Plan).FirstAsync(l=&gt;l.Id==id);          
+        }
+
+        public async Task&lt;IEnumerable&lt;Landlord&gt;&gt; ListAsync()
+        {           
+            return await _context.Landlords.Include(l=&gt;l.Plan).ToListAsync();
+        }
+
+        public void Remove(Landlord landlord)
+        {
+            _context.Landlords.Remove(landlord);
+        }
+
+        public void Update(Landlord landlord)
+        {
+            _context.Landlords.Update(landlord);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[14,59,14,72,0],[15,9,15,10,0],[16,9,16,10,0],[19,9,19,10,0],[20,13,20,57,0],[21,9,21,10,0],[24,9,24,10,0],[25,13,25,88,0],[26,9,26,10,0],[29,9,29,10,0],[30,13,30,78,0],[31,9,31,10,0],[34,9,34,10,0],[35,13,35,49,0],[36,9,36,10,0],[39,9,39,10,0],[40,13,40,49,0],[41,9,41,10,0]]);
+    </script>
+  </body>
+</html>

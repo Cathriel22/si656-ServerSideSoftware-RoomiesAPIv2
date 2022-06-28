@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Exceptions\ExceptionHandlerMiddleware.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.AspNetCore.Http;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Text.Json;
+using System.Threading.Tasks;
+
+namespace Roomies.API.Exceptions
+{
+    public class ExceptionHandlerMiddleware
+    {
+        private readonly RequestDelegate _next;
+
+        public ExceptionHandlerMiddleware(RequestDelegate next)
+        {
+            _next = next;
+        }
+
+        public async Task Invoke(HttpContext context)
+        {
+            try
+            {
+                await _next(context);
+            }
+            catch (Exception error)
+            {
+                var response = context.Response;
+                response.ContentType = &quot;application/json&quot;;
+                response.StatusCode = error switch
+                {
+                    ApplicationException e =&gt; (int)HttpStatusCode.BadRequest,
+                    KeyNotFoundException e =&gt; (int)HttpStatusCode.NotFound,
+                    _ =&gt; (int)HttpStatusCode.InternalServerError,
+                };
+                var result = JsonSerializer.Serialize(new { message = error?.Message });
+                await response.WriteAsync(result);
+            }
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,9,15,64,0],[16,9,16,10,0],[17,13,17,26,0],[18,9,18,10,0],[21,9,21,10,0],[23,13,23,14,0],[24,17,24,38,0],[25,13,25,14,0],[26,13,26,36,0],[27,13,27,14,0],[28,17,28,49,0],[29,17,29,59,0],[30,17,32,47,0],[32,47,32,77,0],[32,77,33,47,0],[33,47,33,75,0],[33,75,34,26,0],[34,26,34,65,0],[34,65,35,19,0],[36,17,36,89,0],[37,17,37,51,0],[38,13,38,14,0],[39,9,39,10,0]]);
+    </script>
+  </body>
+</html>

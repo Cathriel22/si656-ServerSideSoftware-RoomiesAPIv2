@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Publication\Services\FavouritePostService.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Roomies.API.Domain.Models;
+using Roomies.API.Domain.Repositories;
+using Roomies.API.Domain.Services;
+using Roomies.API.Domain.Services.Communications;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Roomies.API.Services
+{
+    public class FavouritePostService : IFavouritePostService
+    {
+        private readonly IFavouritePostRepository _favouritePostRepository;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public FavouritePostService(IFavouritePostRepository favouritePostRepository, IUnitOfWork unitOfWork)
+        {
+            _favouritePostRepository = favouritePostRepository;
+            _unitOfWork = unitOfWork;
+        }
+ 
+
+        public async Task&lt;FavouritePostResponse&gt; AssignFavouritePostAsync(int postId, int leaseholderId)
+        {
+            try
+            {
+                await _favouritePostRepository.AssignFavouritePostAsync(postId, leaseholderId);
+                await _unitOfWork.CompleteAsync();
+                FavouritePost favouritePost = await _favouritePostRepository.FindByPostIdAndLeaseholderId(postId, leaseholderId);
+                return new FavouritePostResponse(favouritePost);
+
+            }
+            catch (Exception ex)
+            {
+                return new FavouritePostResponse($&quot;Un error ocurri&#243; al asignar Post a Usuario: {ex.Message}&quot;);
+            }
+        }
+
+        public async Task&lt;IEnumerable&lt;FavouritePost&gt;&gt; ListAsync()
+        {
+            return await _favouritePostRepository.ListAsync();
+        }
+
+        public async Task&lt;IEnumerable&lt;FavouritePost&gt;&gt; ListByLeaseholderIdAsync(int leaseholderId)
+        {
+            return await _favouritePostRepository.ListByLeaseholderIdAsync(leaseholderId);
+        }
+
+        public async Task&lt;IEnumerable&lt;FavouritePost&gt;&gt; ListByPostIdAsync(int postId)
+        {
+            return await _favouritePostRepository.ListByPostIdAsync(postId);
+        }
+
+        public async Task&lt;FavouritePostResponse&gt; UnassignFavouritePostAsync(int postId, int leaseholderId)
+        {
+
+            try
+            {
+                FavouritePost favouritePost = await _favouritePostRepository.FindByPostIdAndLeaseholderId(postId, leaseholderId);
+
+                _favouritePostRepository.Remove(favouritePost);
+                await _unitOfWork.CompleteAsync();
+
+                return new FavouritePostResponse(favouritePost);
+
+            }
+            catch (Exception ex)
+            {
+                return new FavouritePostResponse($&quot;Un error ocurri&#243; al desasignar Post a Usuario: {ex.Message}&quot;);
+            }
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,9,17,110,1],[18,9,18,10,1],[19,13,19,64,1],[20,13,20,38,1],[21,9,21,10,1],[25,9,25,10,0],[27,13,27,14,0],[28,17,28,96,0],[29,17,29,51,0],[30,17,30,130,0],[31,17,31,65,0],[34,13,34,33,0],[35,13,35,14,0],[36,17,36,111,0],[38,9,38,10,0],[41,9,41,10,1],[42,13,42,63,1],[43,9,43,10,1],[46,9,46,10,1],[47,13,47,91,1],[48,9,48,10,1],[51,9,51,10,1],[52,13,52,77,1],[53,9,53,10,1],[56,9,56,10,0],[59,13,59,14,0],[60,17,60,130,0],[62,17,62,64,0],[63,17,63,51,0],[65,17,65,65,0],[68,13,68,33,0],[69,13,69,14,0],[70,17,70,114,0],[72,9,72,10,0]]);
+    </script>
+  </body>
+</html>

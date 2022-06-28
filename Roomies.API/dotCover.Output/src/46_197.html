@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Persistence\Repositories\UnitOfWork.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Roomies.API.Domain.Persistence.Contexts;
+using Roomies.API.Domain.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Roomies.API.Persistence.Repositories
+{
+    public class UnitOfWork:IUnitOfWork
+    {
+        private readonly AppDbContext _context;
+
+        public UnitOfWork(AppDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task CompleteAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[14,9,14,48,0],[15,9,15,10,0],[16,13,16,32,0],[17,9,17,10,0],[20,9,20,10,0],[21,13,21,47,0],[22,9,22,10,0]]);
+    </script>
+  </body>
+</html>

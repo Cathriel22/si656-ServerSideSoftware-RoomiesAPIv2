@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Profile\Controllers\LandlordPostsController.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Roomies.API.Domain.Models;
+using Roomies.API.Domain.Services;
+using Roomies.API.Resources;
+
+namespace Roomies.API.Controllers
+{
+    [Route(&quot;/api/landlords/{landlordId}/posts&quot;)]
+    public class LandlordPostsController
+    {      
+        private readonly IPostService _postService;
+        private readonly IMapper _mapper;
+
+        public LandlordPostsController(IPostService postService, IMapper mapper)
+        {
+            _postService = postService;
+            _mapper = mapper;
+        }
+
+        [HttpGet]
+        public async Task&lt;IEnumerable&lt;PostResource&gt;&gt; GetAllByLandlordIdAsync(int landlordId)
+        {
+            var posts = await _postService.ListByLandlordIdAsync(landlordId);
+            var resources = _mapper.Map&lt;IEnumerable&lt;Post&gt;, IEnumerable&lt;PostResource&gt;&gt;(posts);
+
+            return resources;
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[18,9,18,81,0],[19,9,19,10,0],[20,13,20,40,0],[21,13,21,30,0],[22,9,22,10,0],[26,9,26,10,0],[27,13,27,78,0],[28,13,28,94,0],[30,13,30,30,0],[31,9,31,10,0]]);
+    </script>
+  </body>
+</html>

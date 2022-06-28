@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Mapping\ResourceToModelProfile.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using AutoMapper;
+using Roomies.API.Domain.Models;
+using Roomies.API.Domain.Services.Communications;
+using Roomies.API.Plan.Resources;
+using Roomies.API.Publication.Domain.Models;
+using Roomies.API.Publication.Resources;
+using Roomies.API.Resources;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Roomies.API.Mapping
+{
+    public class ResourceToModelProfile : AutoMapper.Profile
+    {
+        public ResourceToModelProfile()
+        {
+            CreateMap&lt;SavePaymentMethodResource, PaymentMethod&gt;();
+            CreateMap&lt;SavePostResource, Post&gt;();
+            CreateMap&lt;SaveReviewResource, Review&gt;();
+            CreateMap&lt;SaveProfileResource, Domain.Models.Profile&gt;();
+            CreateMap&lt;SaveLandlordResource, Landlord&gt;();
+            CreateMap&lt;SaveLeaseholderResource, Leaseholder&gt;();
+            CreateMap&lt;RegisterRequest, User&gt;();
+            CreateMap&lt;SaveRuleResource, Rule&gt;();
+            CreateMap&lt;SavePlanResource, Domain.Models.Plan&gt;();
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,9,17,40,0],[18,9,18,10,0],[19,13,19,67,0],[20,13,20,49,0],[21,13,21,53,0],[22,13,22,69,0],[23,13,23,57,0],[24,13,24,63,0],[25,13,25,48,0],[26,13,26,49,0],[27,13,27,63,0],[28,9,28,10,0]]);
+    </script>
+  </body>
+</html>

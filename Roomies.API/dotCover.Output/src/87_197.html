@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Domain\Services\Communications\BaseResponse.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+namespace Roomies.API.Domain.Services.Communications
+{
+    public abstract class BaseResponse&lt;T&gt;
+    {
+        public bool Success { get; set; }
+        public string Message { get; protected set; }
+        public T Resource { get; set; }
+        protected BaseResponse(T resource)
+        {
+            Resource = resource;
+            Success = true;
+            Message = string.Empty;
+        }
+        protected BaseResponse(string message)
+        {
+            Success = false;
+            Message = message;
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[6,31,6,35,0],[6,36,6,40,1],[7,33,7,37,1],[7,38,7,52,1],[8,29,8,33,1],[8,34,8,38,1],[9,9,9,43,1],[10,9,10,10,1],[11,13,11,33,1],[12,13,12,28,1],[13,13,13,36,1],[14,9,14,10,1],[15,9,15,47,1],[16,9,16,10,1],[17,13,17,29,1],[18,13,18,31,1],[19,9,19,10,1]]);
+    </script>
+  </body>
+</html>

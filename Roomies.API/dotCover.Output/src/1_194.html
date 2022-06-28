@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API.Test\FavouritePostServiceTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using FluentAssertions;
+using Moq;
+using NUnit.Framework;
+using Roomies.API.Domain.Models;
+using Roomies.API.Domain.Repositories;
+using Roomies.API.Domain.Services.Communications;
+using Roomies.API.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Roomies.API.Test
+{
+    public class FavouritePostServiceTest
+    {
+        [SetUp]
+        public void Setup()
+        {
+        }
+
+        [Test]
+        public async Task GetAllAsyncWhenNoFavouritePostReturnsEmptyCollection()
+        {
+            // Arrange
+
+            var mockFavouritePostRepository = GetDefaultIFavouritePostRepositoryInstance();
+            var mockUnitOfWork = GetDefaultIUnitOfWorkInstance();
+
+            mockFavouritePostRepository.Setup(r =&gt; r.ListAsync()).ReturnsAsync(new List&lt;FavouritePost&gt;());
+
+            var service = new FavouritePostService(mockFavouritePostRepository.Object, mockUnitOfWork.Object);
+
+            // Act
+
+            List&lt;FavouritePost&gt; result = (List&lt;FavouritePost&gt;)await service.ListAsync();
+            var favouritePostCount = result.Count;
+
+            // Assert
+
+            favouritePostCount.Should().Equals(0);
+        }
+
+        [Test]
+        public async Task GetAllByPostIdAsyncWhenNoFavouritePostReturnsEmptyCollection()
+        {
+            // Arrange
+
+            var mockFavouritePostRepository = GetDefaultIFavouritePostRepositoryInstance();
+            var mockUnitOfWork = GetDefaultIUnitOfWorkInstance();
+            var postId = 1;
+
+            mockFavouritePostRepository.Setup(r =&gt; r.ListByPostIdAsync(postId)).ReturnsAsync(new List&lt;FavouritePost&gt;());
+
+            var service = new FavouritePostService(mockFavouritePostRepository.Object, mockUnitOfWork.Object);
+
+            // Act
+
+            List&lt;FavouritePost&gt; result = (List&lt;FavouritePost&gt;)await service.ListByPostIdAsync(postId);
+            var favouritePostCount = result.Count;
+
+            // Assert
+
+            favouritePostCount.Should().Equals(0);
+        }
+
+        [Test]
+        public async Task GetAllByLeaseholderIdAsyncWhenNoFavouritePostReturnsEmptyCollection()
+        {
+            // Arrange
+
+            var mockFavouritePostRepository = GetDefaultIFavouritePostRepositoryInstance();
+            var mockUnitOfWork = GetDefaultIUnitOfWorkInstance();
+            var leaseholderId = 1;
+
+            mockFavouritePostRepository.Setup(r =&gt; r.ListByLeaseholderIdAsync(leaseholderId)).ReturnsAsync(new List&lt;FavouritePost&gt;());
+
+            var service = new FavouritePostService(mockFavouritePostRepository.Object, mockUnitOfWork.Object);
+
+            // Act
+
+            List&lt;FavouritePost&gt; result = (List&lt;FavouritePost&gt;)await service.ListByLeaseholderIdAsync(leaseholderId);
+            var favouritePostCount = result.Count;
+
+            // Assert
+
+            favouritePostCount.Should().Equals(0);
+        }       
+
+        private static Mock&lt;IFavouritePostRepository&gt; GetDefaultIFavouritePostRepositoryInstance()
+        {
+            return new Mock&lt;IFavouritePostRepository&gt;();
+        }
+
+        private static Mock&lt;IUnitOfWork&gt; GetDefaultIUnitOfWorkInstance()
+        {
+            return new Mock&lt;IUnitOfWork&gt;();
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[20,9,20,10,1],[21,9,21,10,1],[25,9,25,10,1],[28,13,28,92,1],[29,13,29,66,1],[31,13,31,107,1],[33,13,33,111,1],[37,13,37,89,1],[38,13,38,51,1],[42,13,42,51,1],[43,9,43,10,1],[47,9,47,10,1],[50,13,50,92,1],[51,13,51,66,1],[52,13,52,28,1],[54,13,54,121,1],[56,13,56,111,1],[60,13,60,103,1],[61,13,61,51,1],[65,13,65,51,1],[66,9,66,10,1],[70,9,70,10,1],[73,13,73,92,1],[74,13,74,66,1],[75,13,75,35,1],[77,13,77,135,1],[79,13,79,111,1],[83,13,83,117,1],[84,13,84,51,1],[88,13,88,51,1],[89,9,89,10,1],[92,9,92,10,1],[93,13,93,57,1],[94,9,94,10,1],[97,9,97,10,1],[98,13,98,44,1],[99,9,99,10,1]]);
+    </script>
+  </body>
+</html>

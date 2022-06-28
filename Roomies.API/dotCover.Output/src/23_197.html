@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Payment\Services\PaymentMethodService.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Roomies.API.Domain.Models;
+using Roomies.API.Domain.Repositories;
+using Roomies.API.Domain.Services;
+using Roomies.API.Domain.Services.Communications;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Roomies.API.Services
+{
+    public class PaymentMethodService : IPaymentMethodService
+    {
+        private readonly IPaymentMethodRepository _paymentMethodRepository;
+        private readonly IProfilePaymentMethodRepository _userPaymentMethodRepository;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public PaymentMethodService(IPaymentMethodRepository paymentMethodRepository, IProfilePaymentMethodRepository userPaymentMethodRepository, IUnitOfWork unitOfWork)
+        {
+            _paymentMethodRepository = paymentMethodRepository;
+            _userPaymentMethodRepository = userPaymentMethodRepository;
+            _unitOfWork = unitOfWork;
+        }
+
+
+        public async Task&lt;PaymentMethodResponse&gt; DeleteAsync(int id)
+        {
+            var existingPaymentMethod = await _paymentMethodRepository.FindById(id);
+
+            if (existingPaymentMethod == null)
+                return new PaymentMethodResponse(&quot;Medio de Pago inexistente&quot;);
+
+            try
+            {
+                _paymentMethodRepository.Remove(existingPaymentMethod);
+                await _unitOfWork.CompleteAsync();
+
+                return new PaymentMethodResponse(existingPaymentMethod);
+            }
+            catch (Exception ex)
+            {
+                return new PaymentMethodResponse($&quot;Un error ocurri&#243; al buscar la conversaci&#243;n: {ex.Message}&quot;);
+            }
+        }
+
+        public async Task&lt;PaymentMethodResponse&gt; GetByIdAsync(int id)
+        {
+            var existingPaymentMethod = await _paymentMethodRepository.FindById(id);
+
+            if (existingPaymentMethod == null)
+                return new PaymentMethodResponse(&quot;Medio de Pago inexistente&quot;);
+
+            return new PaymentMethodResponse(existingPaymentMethod);
+        }
+
+        public async Task&lt;IEnumerable&lt;PaymentMethod&gt;&gt; ListAsync()
+        {
+            return await _paymentMethodRepository.ListAsync();
+        }
+
+        public async Task&lt;IEnumerable&lt;PaymentMethod&gt;&gt; ListByProfileIdAsync(int profileId)
+        {
+            var userPaymentMethods = await _userPaymentMethodRepository.ListByProfileIdAsync(profileId);
+            var paymentMethod= userPaymentMethods.Select(pt =&gt; pt.PaymentMethod).ToList();
+            return paymentMethod;
+        }
+
+        public async Task&lt;PaymentMethodResponse&gt; SaveAsync(PaymentMethod paymentMethod)
+        {
+            try
+            {
+                await _paymentMethodRepository.AddAsync(paymentMethod);
+                await _unitOfWork.CompleteAsync();
+
+                return new PaymentMethodResponse(paymentMethod);
+            }
+            catch (Exception ex)
+            {
+                return new PaymentMethodResponse($&quot;Un error ocurri&#243; al guardar el medio de pago: {ex.Message}&quot;);
+            }
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[18,9,18,171,1],[19,9,19,10,1],[20,13,20,64,1],[21,13,21,72,1],[22,13,22,38,1],[23,9,23,10,1],[27,9,27,10,0],[28,13,28,85,0],[30,13,30,47,0],[31,17,31,79,0],[34,13,34,14,0],[35,17,35,72,0],[36,17,36,51,0],[38,17,38,73,0],[40,13,40,33,0],[41,13,41,14,0],[42,17,42,111,0],[44,9,44,10,0],[47,9,47,10,1],[48,13,48,85,1],[50,13,50,47,1],[51,17,51,79,1],[53,13,53,69,0],[54,9,54,10,1],[57,9,57,10,1],[58,13,58,63,1],[59,9,59,10,1],[62,9,62,10,0],[63,13,63,105,0],[64,13,64,64,0],[64,64,64,80,0],[64,80,64,91,0],[65,13,65,34,0],[66,9,66,10,0],[69,9,69,10,0],[71,13,71,14,0],[72,17,72,72,0],[73,17,73,51,0],[75,17,75,65,0],[77,13,77,33,0],[78,13,78,14,0],[79,17,79,113,0],[81,9,81,10,0]]);
+    </script>
+  </body>
+</html>

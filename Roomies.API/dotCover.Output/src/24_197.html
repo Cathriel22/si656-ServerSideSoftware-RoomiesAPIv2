@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API\Payment\Services\ProfilePaymentMethodService.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Roomies.API.Domain.Models;
+using Roomies.API.Domain.Repositories;
+using Roomies.API.Domain.Services;
+using Roomies.API.Domain.Services.Communications;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Roomies.API.Services
+{
+    public class ProfilePaymentMethodService : IProfilePaymentMethodService
+    {
+        private readonly IProfilePaymentMethodRepository _profilePaymentMethodRepository;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public ProfilePaymentMethodService(IProfilePaymentMethodRepository userPaymentMethodRepository, IUnitOfWork unitOfWork)
+        {
+            _profilePaymentMethodRepository = userPaymentMethodRepository;
+            _unitOfWork = unitOfWork;
+        }
+
+
+        public async Task&lt;ProfilePaymentMethodResponse&gt; AssignProfilePaymentMethodAsync(int profileId, int paymentMethodId)
+        {
+            try
+            {
+                await _profilePaymentMethodRepository.AssignProfilePaymentMethodAsync(profileId, paymentMethodId);
+                await _unitOfWork.CompleteAsync();
+                ProfilePaymentMethod userPaymentMethod = await _profilePaymentMethodRepository.FindByUserIdAndPaymentMethodId(profileId, paymentMethodId);
+                return new ProfilePaymentMethodResponse(userPaymentMethod);
+
+            }
+            catch (Exception ex)
+            {
+                return new ProfilePaymentMethodResponse($&quot;Un error ocurri&#243; al asignar usuario y m&#233;todo de pago: {ex.Message}&quot;);
+            }
+        }
+
+
+        public async Task&lt;IEnumerable&lt;ProfilePaymentMethod&gt;&gt; ListAsync()
+        {
+            return await _profilePaymentMethodRepository.ListAsync();
+        }
+
+        public async Task&lt;IEnumerable&lt;ProfilePaymentMethod&gt;&gt; ListByPaymentMethodIdAsync(int paymentMethodId)
+        {
+            return await _profilePaymentMethodRepository.ListByPaymentMethodIdAsync(paymentMethodId);
+        }
+
+        public async Task&lt;IEnumerable&lt;ProfilePaymentMethod&gt;&gt; ListByProfileIdAsync(int profileId)
+        {
+            return await _profilePaymentMethodRepository.ListByProfileIdAsync(profileId);
+        }
+
+        public async Task&lt;ProfilePaymentMethodResponse&gt; UnassignProfilePaymentMethodAsync(int profileId, int paymentMethodId)
+        {
+            try
+            {
+                ProfilePaymentMethod userPaymentMethod = await _profilePaymentMethodRepository.FindByUserIdAndPaymentMethodId(profileId, paymentMethodId);
+
+                _profilePaymentMethodRepository.Remove(userPaymentMethod);
+                await _unitOfWork.CompleteAsync();
+
+                return new ProfilePaymentMethodResponse(userPaymentMethod);
+
+            }
+            catch (Exception ex)
+            {
+                return new ProfilePaymentMethodResponse($&quot;Un error ocurri&#243; al desasignar usuario y m&#233;todo de pago: {ex.Message}&quot;);
+            }
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,9,17,128,1],[18,9,18,10,1],[19,13,19,75,1],[20,13,20,38,1],[21,9,21,10,1],[25,9,25,10,0],[27,13,27,14,0],[28,17,28,115,0],[29,17,29,51,0],[30,17,30,155,0],[31,17,31,76,0],[34,13,34,33,0],[35,13,35,14,0],[36,17,36,128,0],[38,9,38,10,0],[42,9,42,10,1],[43,13,43,70,1],[44,9,44,10,1],[47,9,47,10,1],[48,13,48,102,1],[49,9,49,10,1],[52,9,52,10,1],[53,13,53,90,1],[54,9,54,10,1],[57,9,57,10,0],[59,13,59,14,0],[60,17,60,155,0],[62,17,62,75,0],[63,17,63,51,0],[65,17,65,76,0],[68,13,68,33,0],[69,13,69,14,0],[70,17,70,131,0],[72,9,72,10,0]]);
+    </script>
+  </body>
+</html>

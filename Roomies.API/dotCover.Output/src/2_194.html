@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API.Test\LandlordServiceTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using NUnit.Framework;
+using Moq;
+using FluentAssertions;
+using Roomies.API.Domain.Repositories;
+using Roomies.API.Services;
+using Roomies.API.Domain.Services.Communications;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using Roomies.API.Domain.Models;
+using Roomies.API.Domain.Persistence.Repositories;
+using System;
+
+namespace Roomies.API.Test
+{
+    public class LandlordServiceTest
+    {
+        [SetUp]
+        public void Setup()
+        {
+        }
+
+        
+        [Test]
+        public async Task SaveLandlordWhenUserIsYoungerThanRequiredReturnsCantSave()
+        {
+            // Arrange
+
+            var mockLandlordRepository = GetDefaultILandlordRepositoryInstance();
+            var mockPostRepository = GetDefaultIPostRepositoryInstance();
+            var mockPlanRepository = GetDefaultIPlanRepositoryInstance();
+            var mockUserRepository = GetDefaultUserRepositoryInstance();
+            var mockUnitOfWork = GetDefaultIUnitOfWorkInstance();
+            String birthday = &quot;1990-06-10&quot;;
+
+
+            Domain.Models.Plan plan = new Domain.Models.Plan
+            {
+                Id = 1
+
+            };
+
+            Landlord landlord1 = new Landlord
+            {
+                UserId = 1,
+                Birthday = birthday
+
+            };
+
+            User user = new User
+            {
+                Id = 1
+            };
+
+
+            List&lt;Profile&gt; profiles = new List&lt;Profile&gt;();
+            
+            profiles.Add(landlord1);
+
+            mockPlanRepository.Setup(u =&gt; u.AddAsync(plan)).Returns(Task.FromResult&lt;Domain.Models.Plan&gt;(plan));
+            mockPlanRepository.Setup(u =&gt; u.FindById(1)).Returns(Task.FromResult&lt;Domain.Models.Plan&gt;(plan));
+
+            mockUserRepository.Setup(u =&gt; u.AddAsync(user)).Returns(Task.FromResult&lt;User&gt;(user));
+            mockUserRepository.Setup(u =&gt; u.FindById(1)).Returns(Task.FromResult&lt;User&gt;(user));
+
+            
+            mockLandlordRepository.Setup(u =&gt; u.FindById(1)).Returns(Task.FromResult&lt;Landlord&gt;(landlord1));
+
+            var service = new LandlordService(mockLandlordRepository.Object, mockUnitOfWork.Object, mockPlanRepository.Object, 
+                mockPostRepository.Object,mockUserRepository.Object);
+
+
+            // Act
+
+
+            LandlordResponse result = await service.SaveAsync(landlord1, 1, 1);
+            var message = result.Message;
+
+
+            // Assert
+
+            message.Should().Be(&quot;&quot;);
+        }
+
+
+        [Test]
+        public async Task SaveLandlordWhenUserIsOlderThanEighteenReturnsSave()
+        {
+            // Arrange
+
+            var mockLandlordRepository = GetDefaultILandlordRepositoryInstance();
+            var mockPostRepository = GetDefaultIPostRepositoryInstance();
+            var mockPlanRepository = GetDefaultIPlanRepositoryInstance();
+            var mockUserRepository = GetDefaultUserRepositoryInstance();
+            var mockUnitOfWork = GetDefaultIUnitOfWorkInstance();
+
+            String birthday = &quot;1990-06-10&quot;;
+
+            Domain.Models.Plan plan = new Domain.Models.Plan
+            {
+                Id = 1
+
+            };
+
+            Landlord landlord1 = new Landlord
+            {
+                UserId = 1,
+                Birthday = birthday
+
+            };
+
+            User user = new User
+            {
+                Id = 1
+            };
+
+            List&lt;Profile&gt; profiles = new List&lt;Profile&gt;();
+         
+            mockPlanRepository.Setup(u =&gt; u.AddAsync(plan)).Returns(Task.FromResult&lt;Domain.Models.Plan&gt;(plan));
+            mockPlanRepository.Setup(u =&gt; u.FindById(1)).Returns(Task.FromResult&lt;Domain.Models.Plan&gt;(plan));
+
+            mockUserRepository.Setup(u =&gt; u.AddAsync(user)).Returns(Task.FromResult&lt;User&gt;(user));
+            mockUserRepository.Setup(u =&gt; u.FindById(1)).Returns(Task.FromResult&lt;User&gt;(user));
+
+            mockLandlordRepository.Setup(u =&gt; u.AddAsync(landlord1)).Returns(Task.FromResult&lt;Landlord&gt;(null));
+            mockLandlordRepository.Setup(u =&gt; u.FindById(1)).Returns(Task.FromResult&lt;Landlord&gt;(landlord1));
+
+            var service = new LandlordService(mockLandlordRepository.Object, mockUnitOfWork.Object, mockPlanRepository.Object, 
+                mockPostRepository.Object,mockUserRepository.Object);
+
+
+            // Act
+
+
+            LandlordResponse result = await service.SaveAsync(landlord1, 1, 1);
+
+
+            // Assert
+
+            result.Resource.Should().Be(landlord1);
+        }
+
+
+        [Test]
+        public async Task UpdateLandlordWhenUserIsOlderThanEighteenReturnsSave()
+        {
+            // Arrange
+
+            var mockLandlordRepository = GetDefaultILandlordRepositoryInstance();
+            var mockPostRepository = GetDefaultIPostRepositoryInstance();
+            var mockPlanRepository = GetDefaultIPlanRepositoryInstance();
+            var mockUserRepository = GetDefaultUserRepositoryInstance();
+            var mockUnitOfWork = GetDefaultIUnitOfWorkInstance();
+
+            String birthday = &quot;1990-06-10&quot;;
+
+            Domain.Models.Plan plan = new Domain.Models.Plan
+            {
+                Id = 1
+
+            };
+
+            Landlord landlord1 = new Landlord
+            {
+                UserId = 1,
+                Birthday = birthday,
+                Name = &quot;Moroco&quot;
+
+            };
+
+            User user = new User
+            {
+                Id = 1
+            };
+
+            List&lt;Profile&gt; profiles = new List&lt;Profile&gt;();
+
+            mockPlanRepository.Setup(u =&gt; u.AddAsync(plan)).Returns(Task.FromResult&lt;Domain.Models.Plan&gt;(plan));
+            mockPlanRepository.Setup(u =&gt; u.FindById(1)).Returns(Task.FromResult&lt;Domain.Models.Plan&gt;(plan));
+
+            mockUserRepository.Setup(u =&gt; u.AddAsync(user)).Returns(Task.FromResult&lt;User&gt;(user));
+            mockUserRepository.Setup(u =&gt; u.FindById(1)).Returns(Task.FromResult&lt;User&gt;(user));
+
+            mockLandlordRepository.Setup(u =&gt; u.AddAsync(landlord1)).Returns(Task.FromResult&lt;Landlord&gt;(null));
+            mockLandlordRepository.Setup(u =&gt; u.FindById(1)).Returns(Task.FromResult&lt;Landlord&gt;(landlord1));
+
+            var service = new LandlordService(mockLandlordRepository.Object, mockUnitOfWork.Object, mockPlanRepository.Object,
+                mockPostRepository.Object, mockUserRepository.Object);
+
+
+            // Act
+
+
+            LandlordResponse result = await service.UpdateAsync(1, landlord1);
+
+
+            // Assert
+
+            result.Resource.Should().Be(landlord1);
+        }
+
+        [Test]
+        public async Task GetAllAsyncWhenNoLandlordReturnsEmptyCollection()
+        {
+            // Arrange
+
+            var mockLandlordRepository = GetDefaultILandlordRepositoryInstance();
+            var mockUnitOfWork = GetDefaultIUnitOfWorkInstance();
+            var mockPostRepository = GetDefaultIPostRepositoryInstance();
+            var mockPlanRepository = GetDefaultIPlanRepositoryInstance();
+            var mockUserRepository = GetDefaultUserRepositoryInstance();
+            mockLandlordRepository.Setup(r =&gt; r.ListAsync()).ReturnsAsync(new List&lt;Landlord&gt;());
+
+            var service = new LandlordService(mockLandlordRepository.Object, mockUnitOfWork.Object,mockPlanRepository.Object,mockPostRepository.Object,mockUserRepository.Object);
+
+            // Act
+
+            List&lt;Landlord&gt; result = (List&lt;Landlord&gt;)await service.ListAsync();
+            var landlordCount = result.Count;
+
+            // Assert
+
+            landlordCount.Should().Equals(0);
+        }
+
+        [Test]
+        public async Task GetByIdAsyncWhenInvalidIdReturnsLandlordNotFoundResponse()
+        {
+            // Arrange
+            var mockLandlordRepository = GetDefaultILandlordRepositoryInstance();
+            var mockUnitOfWork = GetDefaultIUnitOfWorkInstance();
+            var mockPostRepository = GetDefaultIPostRepositoryInstance();
+            var mockPlanRepository = GetDefaultIPlanRepositoryInstance();
+            var mockUserRepository = GetDefaultUserRepositoryInstance();
+            var landlordId = 1;
+            Landlord landlord = new Landlord();
+            mockLandlordRepository.Setup(r =&gt; r.FindById(landlordId)).Returns(Task.FromResult&lt;Landlord&gt;(null));
+            var service = new LandlordService(mockLandlordRepository.Object, mockUnitOfWork.Object, mockPlanRepository.Object, mockPostRepository.Object,mockUserRepository.Object);
+
+            // Act
+            LandlordResponse result = await service.GetByIdAsync(landlordId);
+            var message = result.Message;
+
+            // Assert
+            message.Should().Be(&quot;Arrendador inexistente&quot;);
+        }
+
+        private static Mock&lt;ILandlordRepository&gt; GetDefaultILandlordRepositoryInstance()
+        {
+            return new Mock&lt;ILandlordRepository&gt;();
+        }
+
+        private static Mock&lt;IUnitOfWork&gt; GetDefaultIUnitOfWorkInstance()
+        {
+            return new Mock&lt;IUnitOfWork&gt;();
+        }
+
+        private static Mock&lt;IPlanRepository&gt; GetDefaultIPlanRepositoryInstance()
+        {
+            return new Mock&lt;IPlanRepository&gt;();
+        }
+
+        private static Mock&lt;IUserRepository&gt; GetDefaultUserRepositoryInstance()
+        {
+            return new Mock&lt;IUserRepository&gt;();
+        }
+
+        private static Mock&lt;IPostRepository&gt; GetDefaultIPostRepositoryInstance()
+        {
+            return new Mock&lt;IPostRepository&gt;();
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[19,9,19,10,1],[20,9,20,10,1],[25,9,25,10,1],[28,13,28,82,1],[29,13,29,74,1],[30,13,30,74,1],[31,13,31,73,1],[32,13,32,66,1],[33,13,33,44,1],[36,13,40,15,1],[42,13,47,15,1],[49,13,52,15,1],[55,13,55,58,1],[57,13,57,37,1],[59,13,59,112,1],[60,13,60,109,1],[62,13,62,98,1],[63,13,63,95,1],[66,13,66,108,1],[68,13,69,70,1],[75,13,75,80,1],[76,13,76,42,1],[81,13,81,37,1],[82,9,82,10,1],[87,9,87,10,1],[90,13,90,82,1],[91,13,91,74,1],[92,13,92,74,1],[93,13,93,73,1],[94,13,94,66,1],[96,13,96,44,1],[98,13,102,15,1],[104,13,109,15,1],[111,13,114,15,1],[116,13,116,58,1],[118,13,118,112,1],[119,13,119,109,1],[121,13,121,98,1],[122,13,122,95,1],[124,13,124,111,1],[125,13,125,108,1],[127,13,128,70,1],[134,13,134,80,1],[139,13,139,52,1],[140,9,140,10,1],[145,9,145,10,1],[148,13,148,82,1],[149,13,149,74,1],[150,13,150,74,1],[151,13,151,73,1],[152,13,152,66,1],[154,13,154,44,1],[156,13,160,15,1],[162,13,168,15,1],[170,13,173,15,1],[175,13,175,58,1],[177,13,177,112,1],[178,13,178,109,1],[180,13,180,98,1],[181,13,181,95,1],[183,13,183,111,1],[184,13,184,108,1],[186,13,187,71,1],[193,13,193,79,1],[198,13,198,52,1],[199,9,199,10,1],[203,9,203,10,1],[206,13,206,82,1],[207,13,207,66,1],[208,13,208,74,1],[209,13,209,74,1],[210,13,210,73,1],[211,13,211,97,1],[213,13,213,179,1],[217,13,217,79,1],[218,13,218,46,1],[222,13,222,46,1],[223,9,223,10,1],[227,9,227,10,1],[229,13,229,82,1],[230,13,230,66,1],[231,13,231,74,1],[232,13,232,74,1],[233,13,233,73,1],[234,13,234,32,1],[235,13,235,48,1],[236,13,236,112,1],[237,13,237,181,1],[240,13,240,78,1],[241,13,241,42,1],[244,13,244,59,1],[245,9,245,10,1],[248,9,248,10,1],[249,13,249,52,1],[250,9,250,10,1],[253,9,253,10,1],[254,13,254,44,1],[255,9,255,10,1],[258,9,258,10,1],[259,13,259,48,1],[260,9,260,10,1],[263,9,263,10,1],[264,13,264,48,1],[265,9,265,10,1],[268,9,268,10,1],[269,13,269,48,1],[270,9,270,10,1]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>C:\Users\usuar\Downloads\RoomiesFinal\Roomies.API\Roomies.API.Test\PostServiceTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using NUnit.Framework;
+using Moq;
+using FluentAssertions;
+using Roomies.API.Domain.Repositories;
+using Roomies.API.Services;
+using Roomies.API.Domain.Services.Communications;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using Roomies.API.Domain.Models;
+
+namespace Roomies.API.Test
+{
+    public class PostServiceTest
+    {
+        [SetUp]
+        public void Setup()
+        {
+        }
+
+        [Test]
+        public async Task GetAllAsyncWhenNoPostReturnsEmptyCollection()
+        {
+            // Arrange
+
+            var mockPostRepository = GetDefaultIPostRepositoryInstance();
+            var mockFavouritePostRepository = GetDefaultIFavouritePostRepositoryInstance();
+            var mockUnitOfWork = GetDefaultIUnitOfWorkInstance();
+
+            mockPostRepository.Setup(r =&gt; r.ListAsync()).ReturnsAsync(new List&lt;Post&gt;());
+
+            var service = new PostService(mockPostRepository.Object, mockUnitOfWork.Object, mockFavouritePostRepository.Object);
+
+            // Act
+
+            List&lt;Post&gt; result = (List&lt;Post&gt;)await service.ListAsync();
+            var postCount = result.Count;
+
+            // Assert
+
+            postCount.Should().Equals(0);
+        }
+
+        [Test]
+        public async Task GetAllByLandlordIdAsyncWhenNoPostReturnsEmptyCollection()
+        {
+            // Arrange
+
+            var mockPostRepository = GetDefaultIPostRepositoryInstance();
+            var mockFavouritePostRepository = GetDefaultIFavouritePostRepositoryInstance();
+            var mockUnitOfWork = GetDefaultIUnitOfWorkInstance();
+            var landlordId = 1;
+
+            mockPostRepository.Setup(r =&gt; r.ListByLandlordIdAsync(landlordId)).ReturnsAsync(new List&lt;Post&gt;());
+
+            var service = new PostService(mockPostRepository.Object, mockUnitOfWork.Object, mockFavouritePostRepository.Object);
+
+            // Act
+
+            List&lt;Post&gt; result = (List&lt;Post&gt;)await service.ListByLandlordIdAsync(landlordId);
+            var postCount = result.Count;
+
+            // Assert
+
+            postCount.Should().Equals(0);
+        }
+
+        [Test]
+        public async Task GetByIdAsyncWhenInvalidIdReturnsCategoryNotFoundResponse()
+        {
+            // Arrange
+            var mockPostRepository = GetDefaultIPostRepositoryInstance();
+            var mockFavouritePostRepository = GetDefaultIFavouritePostRepositoryInstance();
+            var mockUnitOfWork = GetDefaultIUnitOfWorkInstance();
+            var postId = 1;
+            Post post = new Post();
+            mockPostRepository.Setup(r =&gt; r.FindById(postId)).Returns(Task.FromResult&lt;Post&gt;(null));
+            var service = new PostService(mockPostRepository.Object, mockUnitOfWork.Object, mockFavouritePostRepository.Object);
+
+            // Act
+            PostResponse result = await service.GetByIdAsync(postId);
+            var message = result.Message;
+
+            // Assert
+            message.Should().Be(&quot;Post inexistente&quot;);
+        }
+
+        [Test]
+        public async Task SavePostReturnsSave()
+        {
+            // Arrange
+
+
+            var mockPostRepository = GetDefaultIPostRepositoryInstance();
+            var mockLandlordRepository = GetDefaultILandlordRepositoryInstance();
+            var mockUnitOfWork = GetDefaultIUnitOfWorkInstance();
+            var mockFavouritePostRepository = GetDefaultIFavouritePostRepositoryInstance();          
+            var mockReviewRepository = GetDefaultIReviewRepositoryInstance();
+
+            Post post = new Post
+            {
+                Id = 1
+
+            };
+
+            Landlord landlord = new Landlord
+            {
+                Id = 1
+
+            };
+
+
+            mockPostRepository.Setup(u =&gt; u.AddAsync(post)).Returns(Task.FromResult&lt;Post&gt;(post));
+            mockPostRepository.Setup(u =&gt; u.FindById(1)).Returns(Task.FromResult&lt;Post&gt;(post));
+
+            mockLandlordRepository.Setup(u =&gt; u.AddAsync(landlord)).Returns(Task.FromResult&lt;Landlord&gt;(landlord));
+            mockLandlordRepository.Setup(u =&gt; u.FindById(1)).Returns(Task.FromResult&lt;Landlord&gt;(landlord));          
+
+            var service = new PostService(mockPostRepository.Object, mockUnitOfWork.Object, mockFavouritePostRepository.Object, mockLandlordRepository.Object, mockReviewRepository.Object);
+
+
+            // Act
+
+
+            PostResponse result = await service.SaveAsync(post, 1);
+
+
+            // Assert
+
+            result.Resource.Should().Be(post);
+        }
+
+        [Test]
+        public async Task UpdatePostReturnsUpdate()
+        {
+            // Arrange
+
+
+            var mockPostRepository = GetDefaultIPostRepositoryInstance();
+            var mockLandlordRepository = GetDefaultILandlordRepositoryInstance();
+            var mockUnitOfWork = GetDefaultIUnitOfWorkInstance();
+            var mockFavouritePostRepository = GetDefaultIFavouritePostRepositoryInstance();
+            var mockReviewRepository = GetDefaultIReviewRepositoryInstance();
+
+
+            Post post = new Post
+            {
+                Id = 1,
+                Department = &quot;Lima&quot;
+            };
+
+            Landlord landlord = new Landlord
+            {
+                Id = 1
+
+            };
+
+
+            mockPostRepository.Setup(u =&gt; u.AddAsync(post)).Returns(Task.FromResult&lt;Post&gt;(post));
+            mockPostRepository.Setup(u =&gt; u.FindById(1)).Returns(Task.FromResult&lt;Post&gt;(post));
+
+            mockLandlordRepository.Setup(u =&gt; u.AddAsync(landlord)).Returns(Task.FromResult&lt;Landlord&gt;(landlord));
+            mockLandlordRepository.Setup(u =&gt; u.FindById(1)).Returns(Task.FromResult&lt;Landlord&gt;(landlord));
+
+            var service = new PostService(mockPostRepository.Object, mockUnitOfWork.Object, mockFavouritePostRepository.Object, mockLandlordRepository.Object, mockReviewRepository.Object);
+
+
+            // Act
+
+
+            PostResponse result = await service.UpdateAsync(1, post);
+
+
+            // Assert
+
+            result.Resource.Should().Be(post);
+        }
+
+        private static Mock&lt;IPostRepository&gt; GetDefaultIPostRepositoryInstance()
+        {
+            return new Mock&lt;IPostRepository&gt;();
+        }
+
+        private static Mock&lt;IFavouritePostRepository&gt; GetDefaultIFavouritePostRepositoryInstance()
+        {
+            return new Mock&lt;IFavouritePostRepository&gt;();
+        }
+        private static Mock&lt;ILandlordRepository&gt; GetDefaultILandlordRepositoryInstance()
+        {
+            return new Mock&lt;ILandlordRepository&gt;();
+        }
+        private static Mock&lt;IReviewRepository&gt; GetDefaultIReviewRepositoryInstance()
+        {
+            return new Mock&lt;IReviewRepository&gt;();
+        }
+        private static Mock&lt;IUnitOfWork&gt; GetDefaultIUnitOfWorkInstance()
+        {
+            return new Mock&lt;IUnitOfWork&gt;();
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,9,17,10,1],[18,9,18,10,1],[22,9,22,10,1],[25,13,25,74,1],[26,13,26,92,1],[27,13,27,66,1],[29,13,29,89,1],[31,13,31,129,1],[35,13,35,71,1],[36,13,36,42,1],[40,13,40,42,1],[41,9,41,10,1],[45,9,45,10,1],[48,13,48,74,1],[49,13,49,92,1],[50,13,50,66,1],[51,13,51,32,1],[53,13,53,111,1],[55,13,55,129,1],[59,13,59,93,1],[60,13,60,42,1],[64,13,64,42,1],[65,9,65,10,1],[69,9,69,10,1],[71,13,71,74,1],[72,13,72,92,1],[73,13,73,66,1],[74,13,74,28,1],[75,13,75,36,1],[76,13,76,100,1],[77,13,77,129,1],[80,13,80,70,1],[81,13,81,42,1],[84,13,84,53,1],[85,9,85,10,1],[89,9,89,10,1],[93,13,93,74,1],[94,13,94,82,1],[95,13,95,66,1],[96,13,96,92,1],[97,13,97,78,1],[99,13,103,15,1],[105,13,109,15,1],[112,13,112,98,1],[113,13,113,95,1],[115,13,115,114,1],[116,13,116,107,1],[118,13,118,189,1],[124,13,124,68,1],[129,13,129,47,1],[130,9,130,10,1],[134,9,134,10,1],[138,13,138,74,1],[139,13,139,82,1],[140,13,140,66,1],[141,13,141,92,1],[142,13,142,78,1],[145,13,149,15,1],[151,13,155,15,1],[158,13,158,98,1],[159,13,159,95,1],[161,13,161,114,1],[162,13,162,107,1],[164,13,164,189,1],[170,13,170,70,1],[175,13,175,47,1],[176,9,176,10,1],[179,9,179,10,1],[180,13,180,48,1],[181,9,181,10,1],[184,9,184,10,1],[185,13,185,57,1],[186,9,186,10,1],[188,9,188,10,1],[189,13,189,52,1],[190,9,190,10,1],[192,9,192,10,1],[193,13,193,50,1],[194,9,194,10,1],[196,9,196,10,1],[197,13,197,44,1],[198,9,198,10,1]]);
+    </script>
+  </body>
+</html>
